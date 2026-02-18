@@ -35,14 +35,17 @@ jobs:
         id: diff
         run: |
           if git rev-parse HEAD~1 > /dev/null 2>&1; then
-            git diff HEAD~1 HEAD --unified=3 -- '*.ts' '*.tsx' > diff.txt
+            git diff HEAD~1 HEAD --unified=3 > diff.txt
           else
-            git show HEAD --unified=3 -- '*.ts' '*.tsx' > diff.txt
+            git show HEAD --unified=3 > diff.txt
           fi
 
           if [ ! -s diff.txt ]; then
-            echo "Aucun changement TypeScript detecte dans ce commit." > diff.txt
+            echo "Aucun changement detecte dans ce commit." > diff.txt
           fi
+
+          echo "Contenu du diff:"
+          cat diff.txt | head -50
 
           echo "diff_content<<EOF" >> $GITHUB_OUTPUT
           head -c 3000 diff.txt >> $GITHUB_OUTPUT
@@ -59,9 +62,9 @@ jobs:
           ")
 
           RESPONSE=$(curl -s -X POST \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d "{\"contents\": [{\"parts\": [{\"text\": \"Tu es un expert en code review React TypeScript. Analyse ce diff git et fournis un rapport concis en français avec : 1) Points positifs 2) Problèmes détectés 3) Suggestions d amelioration. Diff: ${DIFF}\"}]}]}")
+            -d "{\"contents\": [{\"parts\": [{\"text\": \"Tu es un expert en code review React TypeScript. Analyse ce diff git et fournis un rapport concis en français avec : 1) Points positifs 2) Problemes detectes 3) Suggestions d amelioration. Diff: ${DIFF}\"}]}]}")
 
           echo "Reponse Gemini: $RESPONSE"
 
