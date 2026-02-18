@@ -1,0 +1,109 @@
+name: Code Review Automatique avec Gemini
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Installer les dépendances
+        run: npm ci --legacy-peer-deps
+
+      - name: ESLint
+        run: npx eslint . --max-warnings=50
+
+      - name: Prettier
+        run: npx prettier --check "src/**/*.{ts,tsx,css}"
+
+      - name: Récupérer le diff git
+        id: diff
+        run: |
+          git diff HEAD~1 HEAD --unified=3 -- '*.ts' '*.tsx' > diff.txt
+          echo "diff_content<<EOF" >> $GITHUB_OUTPUT
+          head -c 3000 diff.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Code Review avec Gemini
+        id: gemini_review
+        run: |
+          DIFF="${{ steps.diff.outputs.diff_content }}"
+          
+          RESPONSE=$(curl -s -X POST \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"contents\": [{
+                \"parts\": [{
+                  \"text\": \"Tu es un expert en code review React TypeScript. Analyse ce diff git et fournis un rapport concis en français avec : 1) Points positifs 2) Problèmes détectés 3) Suggestions d'amélioration. Diff:\\n${DIFF}\"
+                }]
+              }]
+            }")
+          
+          REVIEW=$(echo $RESPONSE | python3 -c "
+          import sys, json
+          data = json.load(sys.stdin)
+          print(data['candidates'][0]['content']['parts'][0]['text'])
+          " 2>/dev/null || echo "Analyse Gemini indisponible")
+          
+          echo "review<<EOF" >> $GITHUB_OUTPUT
+          echo "$REVIEW" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Envoyer le rapport par email
+        run: |
+          python3 << 'EOF'
+          import smtplib
+          from email.mime.multipart import MIMEMultipart
+          from email.mime.text import MIMEText
+          import os
+
+          sender = os.environ['EMAIL_USER']
+          receiver = os.environ['EMAIL_USER']
+          password = os.environ['EMAIL_PASS']
+
+          msg = MIMEMultipart('alternative')
+          msg['Subject'] = f"[StyleThreads] Code Review - ${{ github.ref_name }} - ${{ github.sha[:7] }}"
+          msg['From'] = sender
+          msg['To'] = receiver
+
+          html = f"""
+          <html><body>
+          <h2>🔍 Rapport de Code Review</h2>
+          <p><b>Branche :</b> ${{ github.ref_name }}</p>
+          <p><b>Commit :</b> ${{ github.sha }}</p>
+          <p><b>Auteur :</b> ${{ github.actor }}</p>
+          <hr>
+          <h3>📋 Analyse Gemini</h3>
+          <pre>{os.environ['GEMINI_REVIEW']}</pre>
+          <hr>
+          <p><a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Voir le rapport complet</a></p>
+          </body></html>
+          """
+
+          msg.attach(MIMEText(html, 'html'))
+
+          with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+              server.login(sender, password)
+              server.sendmail(sender, receiver, msg.as_string())
+              print("✅ Email envoyé avec succès !")
+          EOF
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          GEMINI_REVIEW: ${{ steps.gemini_review.outputs.review }}
