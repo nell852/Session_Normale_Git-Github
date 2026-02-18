@@ -14,7 +14,7 @@ export default function About() {
     },
     {
       icon: Truck,
-      title: 'Livraison Rapide',
+      title: 'Livraison Rapides chez nous',
       description: 'Expédition sous 24h et livraison gratuite dès 75€',
     },
     {
