@@ -43,7 +43,7 @@ jobs:
         id: gemini_review
         run: |
           DIFF="${{ steps.diff.outputs.diff_content }}"
-          
+
           RESPONSE=$(curl -s -X POST \
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
             -H "Content-Type: application/json" \
@@ -54,13 +54,13 @@ jobs:
                 }]
               }]
             }")
-          
+
           REVIEW=$(echo $RESPONSE | python3 -c "
           import sys, json
           data = json.load(sys.stdin)
           print(data['candidates'][0]['content']['parts'][0]['text'])
           " 2>/dev/null || echo "Analyse Gemini indisponible")
-          
+
           echo "review<<EOF" >> $GITHUB_OUTPUT
           echo "$REVIEW" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -78,21 +78,21 @@ jobs:
           password = os.environ['EMAIL_PASS']
 
           msg = MIMEMultipart('alternative')
-          msg['Subject'] = f"[StyleThreads] Code Review - ${{ github.ref_name }} - ${{ github.sha[:7] }}"
+          msg['Subject'] = "[StyleThreads] Code Review - " + os.environ['GITHUB_REF_NAME'] + " - " + os.environ['GITHUB_SHA']
           msg['From'] = sender
           msg['To'] = receiver
 
-          html = f"""
+          html = """
           <html><body>
-          <h2>🔍 Rapport de Code Review</h2>
-          <p><b>Branche :</b> ${{ github.ref_name }}</p>
-          <p><b>Commit :</b> ${{ github.sha }}</p>
-          <p><b>Auteur :</b> ${{ github.actor }}</p>
+          <h2>&#128269; Rapport de Code Review</h2>
+          <p><b>Branche :</b> """ + os.environ['GITHUB_REF_NAME'] + """</p>
+          <p><b>Commit :</b> """ + os.environ['GITHUB_SHA'] + """</p>
+          <p><b>Auteur :</b> """ + os.environ['GITHUB_ACTOR'] + """</p>
           <hr>
-          <h3>📋 Analyse Gemini</h3>
-          <pre>{os.environ['GEMINI_REVIEW']}</pre>
+          <h3>&#128203; Analyse Gemini</h3>
+          <pre>""" + os.environ['GEMINI_REVIEW'] + """</pre>
           <hr>
-          <p><a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Voir le rapport complet</a></p>
+          <p><a href=" """ + os.environ['GITHUB_SERVER_URL'] + "/" + os.environ['GITHUB_REPOSITORY'] + "/actions/runs/" + os.environ['GITHUB_RUN_ID'] + """">Voir le rapport complet</a></p>
           </body></html>
           """
 
@@ -101,9 +101,15 @@ jobs:
           with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
               server.login(sender, password)
               server.sendmail(sender, receiver, msg.as_string())
-              print("✅ Email envoyé avec succès !")
+              print("Email envoye avec succes !")
           EOF
         env:
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           GEMINI_REVIEW: ${{ steps.gemini_review.outputs.review }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_SERVER_URL: ${{ github.server_url }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
