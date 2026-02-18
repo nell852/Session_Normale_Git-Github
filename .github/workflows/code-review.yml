@@ -14,7 +14,7 @@ jobs:
       - name: Checkout du code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -22,7 +22,7 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: Installer les dépendances
+      - name: Installer les dependances
         run: npm ci --legacy-peer-deps
 
       - name: ESLint
@@ -31,10 +31,19 @@ jobs:
       - name: Prettier
         run: npx prettier --check "src/**/*.{ts,tsx,css}"
 
-      - name: Récupérer le diff git
+      - name: Recuperer le diff git
         id: diff
         run: |
-          git diff HEAD~1 HEAD --unified=3 -- '*.ts' '*.tsx' > diff.txt
+          if git rev-parse HEAD~1 > /dev/null 2>&1; then
+            git diff HEAD~1 HEAD --unified=3 -- '*.ts' '*.tsx' > diff.txt
+          else
+            git show HEAD --unified=3 -- '*.ts' '*.tsx' > diff.txt
+          fi
+
+          if [ ! -s diff.txt ]; then
+            echo "Aucun changement TypeScript detecte dans ce commit." > diff.txt
+          fi
+
           echo "diff_content<<EOF" >> $GITHUB_OUTPUT
           head -c 3000 diff.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -42,20 +51,21 @@ jobs:
       - name: Code Review avec Gemini
         id: gemini_review
         run: |
-          DIFF="${{ steps.diff.outputs.diff_content }}"
+          DIFF=$(cat diff.txt | head -c 2000 | python3 -c "
+          import sys
+          content = sys.stdin.read()
+          content = content.replace('\\\\', '\\\\\\\\').replace('\"', '\\\\\"').replace('\n', '\\\\n').replace('\r', '')
+          print(content, end='')
+          ")
 
           RESPONSE=$(curl -s -X POST \
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d "{
-              \"contents\": [{
-                \"parts\": [{
-                  \"text\": \"Tu es un expert en code review React TypeScript. Analyse ce diff git et fournis un rapport concis en français avec : 1) Points positifs 2) Problèmes détectés 3) Suggestions d'amélioration. Diff:\\n${DIFF}\"
-                }]
-              }]
-            }")
+            -d "{\"contents\": [{\"parts\": [{\"text\": \"Tu es un expert en code review React TypeScript. Analyse ce diff git et fournis un rapport concis en français avec : 1) Points positifs 2) Problèmes détectés 3) Suggestions d amelioration. Diff: ${DIFF}\"}]}]}")
 
-          REVIEW=$(echo $RESPONSE | python3 -c "
+          echo "Reponse Gemini: $RESPONSE"
+
+          REVIEW=$(echo "$RESPONSE" | python3 -c "
           import sys, json
           data = json.load(sys.stdin)
           print(data['candidates'][0]['content']['parts'][0]['text'])
@@ -78,23 +88,23 @@ jobs:
           password = os.environ['EMAIL_PASS']
 
           msg = MIMEMultipart('alternative')
-          msg['Subject'] = "[StyleThreads] Code Review - " + os.environ['GITHUB_REF_NAME'] + " - " + os.environ['GITHUB_SHA']
+          msg['Subject'] = "[StyleThreads] Code Review - " + os.environ['GITHUB_REF_NAME'] + " - " + os.environ['GITHUB_SHA'][:7]
           msg['From'] = sender
           msg['To'] = receiver
 
-          html = """
-          <html><body>
-          <h2>&#128269; Rapport de Code Review</h2>
-          <p><b>Branche :</b> """ + os.environ['GITHUB_REF_NAME'] + """</p>
-          <p><b>Commit :</b> """ + os.environ['GITHUB_SHA'] + """</p>
-          <p><b>Auteur :</b> """ + os.environ['GITHUB_ACTOR'] + """</p>
-          <hr>
-          <h3>&#128203; Analyse Gemini</h3>
-          <pre>""" + os.environ['GEMINI_REVIEW'] + """</pre>
-          <hr>
-          <p><a href=" """ + os.environ['GITHUB_SERVER_URL'] + "/" + os.environ['GITHUB_REPOSITORY'] + "/actions/runs/" + os.environ['GITHUB_RUN_ID'] + """">Voir le rapport complet</a></p>
-          </body></html>
-          """
+          html = (
+            "<html><body>"
+            "<h2>Rapport de Code Review</h2>"
+            "<p><b>Branche :</b> " + os.environ['GITHUB_REF_NAME'] + "</p>"
+            "<p><b>Commit :</b> " + os.environ['GITHUB_SHA'] + "</p>"
+            "<p><b>Auteur :</b> " + os.environ['GITHUB_ACTOR'] + "</p>"
+            "<hr>"
+            "<h3>Analyse Gemini</h3>"
+            "<pre>" + os.environ['GEMINI_REVIEW'] + "</pre>"
+            "<hr>"
+            "<p><a href='" + os.environ['GITHUB_SERVER_URL'] + "/" + os.environ['GITHUB_REPOSITORY'] + "/actions/runs/" + os.environ['GITHUB_RUN_ID'] + "'>Voir le rapport complet</a></p>"
+            "</body></html>"
+          )
 
           msg.attach(MIMEText(html, 'html'))
 
