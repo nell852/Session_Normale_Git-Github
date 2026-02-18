@@ -19,11 +19,11 @@ export function ProductCard({ product }: ProductCardProps) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     // Add with default size and color for quick add
     const defaultSize = product.sizes[0] || 'M';
     const defaultColor = product.colors[0] || 'Noir';
-    
+
     addToCart(product, defaultSize, defaultColor, 1);
   };
 
@@ -42,19 +42,13 @@ export function ProductCard({ product }: ProductCardProps) {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           )}
-          
+
           {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {product.on_sale && (
-              <Badge className="bg-red-500 text-white">
-                {t('products.sale')}
-              </Badge>
+              <Badge className="bg-red-500 text-white">{t('products.sale')}</Badge>
             )}
-            {product.featured && (
-              <Badge className="bg-brand-blue text-white">
-                Vedette
-              </Badge>
-            )}
+            {product.featured && <Badge className="bg-brand-blue text-white">Vedette</Badge>}
           </div>
 
           {/* Quick actions */}
@@ -85,16 +79,12 @@ export function ProductCard({ product }: ProductCardProps) {
           <h3 className="font-medium text-sm line-clamp-2 group-hover:text-brand-blue transition-colors">
             {product.name}
           </h3>
-          
-          <p className="text-xs text-muted-foreground line-clamp-2">
-            {product.description}
-          </p>
+
+          <p className="text-xs text-muted-foreground line-clamp-2">{product.description}</p>
 
           {/* Price */}
           <div className="flex items-center gap-2">
-            <span className="font-bold text-price">
-              {formatPrice(price)}
-            </span>
+            <span className="font-bold text-price">{formatPrice(price)}</span>
             {originalPrice && (
               <span className="text-sm text-muted-foreground line-through">
                 {formatPrice(originalPrice)}
@@ -114,9 +104,7 @@ export function ProductCard({ product }: ProductCardProps) {
                 />
               ))}
               {product.colors.length > 4 && (
-                <span className="text-xs text-muted-foreground">
-                  +{product.colors.length - 4}
-                </span>
+                <span className="text-xs text-muted-foreground">+{product.colors.length - 4}</span>
               )}
             </div>
           )}

@@ -1,4 +1,3 @@
-
 /**
  * Formate un prix en Franc CFA (XAF)
  * @param price - Le prix à formater

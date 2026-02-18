@@ -1,28 +1,33 @@
-import type React from "react"
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { Search, ShoppingCart, User, Menu, Sun, Moon, Globe } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { useCart } from "@/contexts/CartContext"
-import { useTheme } from "@/contexts/ThemeContext"
-import { useLanguage } from "@/contexts/LanguageContext"
+import type React from 'react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Search, ShoppingCart, User, Menu, Sun, Moon, Globe } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useCart } from '@/contexts/CartContext';
+import { useTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export function Header() {
-  const { state: cartState, toggleCart } = useCart()
-  const { theme, toggleTheme } = useTheme()
-  const { language, setLanguage, t } = useLanguage()
-  const navigate = useNavigate()
-  const [searchQuery, setSearchQuery] = useState("")
+  const { state: cartState, toggleCart } = useCart();
+  const { theme, toggleTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`)
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
     }
-  }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm">
@@ -43,13 +48,13 @@ export function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="backdrop-blur-md bg-background/95 border-border/50">
                 <DropdownMenuItem
-                  onClick={() => setLanguage("fr")}
+                  onClick={() => setLanguage('fr')}
                   className="hover:bg-accent/50 transition-colors duration-200"
                 >
                   🇫🇷 Français
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => setLanguage("en")}
+                  onClick={() => setLanguage('en')}
                   className="hover:bg-accent/50 transition-colors duration-200"
                 >
                   🇺🇸 English
@@ -63,7 +68,7 @@ export function Header() {
               onClick={toggleTheme}
               className="h-8 w-8 px-0 hover:bg-accent/50 transition-all duration-200 rounded-full border border-transparent hover:border-border/50 hover:rotate-12"
             >
-              {theme === "light" ? (
+              {theme === 'light' ? (
                 <Moon className="h-4 w-4 transition-transform duration-200" />
               ) : (
                 <Sun className="h-4 w-4 transition-transform duration-200" />
@@ -87,10 +92,10 @@ export function Header() {
           {/* Enhanced Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
             {[
-              { to: "/", key: "nav.home" },
-              { to: "/products", key: "nav.products" },
-              { to: "/about", key: "nav.about" },
-              { to: "/contact", key: "nav.contact" },
+              { to: '/', key: 'nav.home' },
+              { to: '/products', key: 'nav.products' },
+              { to: '/about', key: 'nav.about' },
+              { to: '/contact', key: 'nav.contact' },
             ].map((item) => (
               <Link
                 key={item.to}
@@ -153,20 +158,23 @@ export function Header() {
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="backdrop-blur-md bg-background/95 border-border/50 shadow-xl">
+              <DropdownMenuContent
+                align="end"
+                className="backdrop-blur-md bg-background/95 border-border/50 shadow-xl"
+              >
                 <DropdownMenuItem className="hover:bg-accent/50 transition-colors duration-200">
                   <Link to="/login" className="w-full">
-                    {t("nav.login")}
+                    {t('nav.login')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="hover:bg-accent/50 transition-colors duration-200">
                   <Link to="/register" className="w-full">
-                    {t("nav.register")}
+                    {t('nav.register')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="hover:bg-accent/50 transition-colors duration-200">
                   <Link to="/account" className="w-full">
-                    {t("nav.account")}
+                    {t('nav.account')}
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -184,5 +192,5 @@ export function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }

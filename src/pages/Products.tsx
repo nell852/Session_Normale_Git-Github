@@ -3,7 +3,13 @@ import { useSearchParams } from 'react-router-dom'; // Ajout de l'import
 import { Grid, List, Filter, Search } from 'lucide-react';
 // import { Button } from '@ant-design/icons';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { ProductCard } from '@/components/ProductCard';
 import { ProductFilters } from '@/components/ProductFilters';
 import { useProducts } from '@/hooks/useProducts';
@@ -36,7 +42,9 @@ export default function Products() {
   // Calculer la plage de prix maximale dynamiquement
   const maxPrice = useMemo(() => {
     return products.length > 0
-      ? Math.ceil(Math.max(...products.map(p => p.on_sale && p.sale_price ? p.sale_price : p.price)))
+      ? Math.ceil(
+          Math.max(...products.map((p) => (p.on_sale && p.sale_price ? p.sale_price : p.price)))
+        )
       : 50000;
   }, [products]);
 
@@ -51,20 +59,33 @@ export default function Products() {
 
   // Filtrer les produits en fonction de la recherche
   const filteredProducts = useMemo(() => {
-    return products.filter(product => {
-      const matchesSearch = searchQuery === ''
-        ? true
-        : product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (product.description?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+    return products.filter((product) => {
+      const matchesSearch =
+        searchQuery === ''
+          ? true
+          : product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (product.description?.toLowerCase() || '').includes(searchQuery.toLowerCase());
 
-      const matchesCategory = filters.categories.length === 0 || filters.categories.includes(product.category.toLowerCase());
-      const matchesSize = filters.sizes.length === 0 || filters.sizes.some(size => product.sizes.includes(size));
-      const matchesColor = filters.colors.length === 0 || filters.colors.some(color => product.colors.includes(color));
+      const matchesCategory =
+        filters.categories.length === 0 ||
+        filters.categories.includes(product.category.toLowerCase());
+      const matchesSize =
+        filters.sizes.length === 0 || filters.sizes.some((size) => product.sizes.includes(size));
+      const matchesColor =
+        filters.colors.length === 0 ||
+        filters.colors.some((color) => product.colors.includes(color));
       const price = product.on_sale && product.sale_price ? product.sale_price : product.price;
       const matchesPrice = price >= filters.priceRange[0] && price <= filters.priceRange[1];
       const matchesOnSale = !filters.onSale || product.on_sale;
 
-      return matchesSearch && matchesCategory && matchesSize && matchesColor && matchesPrice && matchesOnSale;
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesSize &&
+        matchesColor &&
+        matchesPrice &&
+        matchesOnSale
+      );
     });
   }, [products, searchQuery, filters]);
 
@@ -129,7 +150,8 @@ export default function Products() {
         <div>
           <h1 className="text-3xl font-bold mb-2">Produits</h1>
           <p className="text-muted-foreground">
-            {sortedProducts.length} produit{sortedProducts.length > 1 ? 's' : ''} trouvé{sortedProducts.length > 1 ? 's' : ''}
+            {sortedProducts.length} produit{sortedProducts.length > 1 ? 's' : ''} trouvé
+            {sortedProducts.length > 1 ? 's' : ''}
           </p>
         </div>
 
@@ -208,16 +230,15 @@ export default function Products() {
               <Button onClick={clearFilters}>Effacer les filtres et recherche</Button>
             </div>
           ) : (
-            <div className={`grid gap-6 ${
-              viewMode === 'grid' 
-                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-                : 'grid-cols-1'
-            }`}>
+            <div
+              className={`grid gap-6 ${
+                viewMode === 'grid'
+                  ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+                  : 'grid-cols-1'
+              }`}
+            >
               {sortedProducts.map((product) => (
-                <ProductCard 
-                  key={product.id} 
-                  product={product}
-                />
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           )}

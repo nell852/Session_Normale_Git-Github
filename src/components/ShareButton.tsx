@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { Share2, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface ShareButtonProps {
   title: string;
@@ -52,20 +48,12 @@ export function ShareButton({ title, url = window.location.href }: ShareButtonPr
           <h4 className="font-medium">Partager ce produit</h4>
           <div className="space-y-2">
             {navigator.share && (
-              <Button 
-                onClick={handleNativeShare}
-                className="w-full justify-start"
-                variant="ghost"
-              >
+              <Button onClick={handleNativeShare} className="w-full justify-start" variant="ghost">
                 <Share2 className="h-4 w-4 mr-2" />
                 Partager
               </Button>
             )}
-            <Button 
-              onClick={handleCopyLink}
-              className="w-full justify-start"
-              variant="ghost"
-            >
+            <Button onClick={handleCopyLink} className="w-full justify-start" variant="ghost">
               {copied ? (
                 <>
                   <Check className="h-4 w-4 mr-2 text-green-600" />

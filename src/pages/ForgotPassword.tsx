@@ -1,50 +1,50 @@
-"use client"
+'use client';
 
-import type React from "react"
-import { useState } from "react"
-import { Link } from "react-router-dom"
-import { Mail, ArrowLeft, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useToast } from "@/hooks/use-toast"
-import { supabase } from "@/integrations/supabase/client"
+import type React from 'react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Mail, ArrowLeft, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function ForgotPassword() {
-  const { toast } = useToast()
-  const [email, setEmail] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [emailSent, setEmailSent] = useState(false)
+  const { toast } = useToast();
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
-      })
+      });
 
       if (error) {
-        throw error
+        throw error;
       }
 
-      setEmailSent(true)
+      setEmailSent(true);
       toast({
-        title: "Email envoyé !",
-        description: "Vérifiez votre boîte mail pour réinitialiser votre mot de passe.",
-      })
+        title: 'Email envoyé !',
+        description: 'Vérifiez votre boîte mail pour réinitialiser votre mot de passe.',
+      });
     } catch (error: any) {
-      console.error("Erreur:", error)
+      console.error('Erreur:', error);
       toast({
-        variant: "destructive",
-        title: "Erreur",
+        variant: 'destructive',
+        title: 'Erreur',
         description: "Impossible d'envoyer l'email de réinitialisation.",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   if (emailSent) {
     return (
@@ -72,7 +72,7 @@ export default function ForgotPassword() {
           </Card>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -81,7 +81,9 @@ export default function ForgotPassword() {
         <Card>
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Mot de passe oublié</CardTitle>
-            <CardDescription>Entrez votre email pour recevoir un lien de réinitialisation</CardDescription>
+            <CardDescription>
+              Entrez votre email pour recevoir un lien de réinitialisation
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -105,14 +107,18 @@ export default function ForgotPassword() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full bg-brand-blue hover:bg-brand-blue-dark" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="w-full bg-brand-blue hover:bg-brand-blue-dark"
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Envoi en cours...
                   </>
                 ) : (
-                  "Envoyer le lien de réinitialisation"
+                  'Envoyer le lien de réinitialisation'
                 )}
               </Button>
             </form>
@@ -127,5 +133,5 @@ export default function ForgotPassword() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

@@ -14,7 +14,13 @@ import { ProductReviews } from '@/components/ProductReviews';
 import { ProductSpecifications } from '@/components/ProductSpecifications';
 import { ShareButton } from '@/components/ShareButton';
 import { supabase } from '../integrations/supabase/client';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -22,7 +28,7 @@ export default function ProductDetail() {
   const { data: reviewsStats } = useProductReviewsStats(id!);
   const { addToCart } = useCart();
   const navigate = useNavigate();
-  
+
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
@@ -104,17 +110,15 @@ export default function ProductDetail() {
       return;
     }
 
-    const { error } = await supabase
-      .from('product_reviews')
-      .insert({
-        product_id: id,
-        user_id: userId,
-        comment,
-        rating,
-      });
+    const { error } = await supabase.from('product_reviews').insert({
+      product_id: id,
+      user_id: userId,
+      comment,
+      rating,
+    });
 
     if (error) {
-      setSubmitStatus('Erreur lors de l\'envoi du commentaire : ' + error.message);
+      setSubmitStatus("Erreur lors de l'envoi du commentaire : " + error.message);
     } else {
       setComment('');
       setRating(null);
@@ -125,9 +129,13 @@ export default function ProductDetail() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
-        <Link to="/" className="hover:text-foreground">Accueil</Link>
+        <Link to="/" className="hover:text-foreground">
+          Accueil
+        </Link>
         <span>/</span>
-        <Link to="/products" className="hover:text-foreground">Produits</Link>
+        <Link to="/products" className="hover:text-foreground">
+          Produits
+        </Link>
         <span>/</span>
         <span>{product.category}</span>
         <span>/</span>
@@ -152,7 +160,7 @@ export default function ProductDetail() {
               />
             )}
           </div>
-          
+
           {product.images && product.images.length > 1 && (
             <div className="flex gap-2">
               {product.images.map((image, index) => (
@@ -177,12 +185,8 @@ export default function ProductDetail() {
         <div className="space-y-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              {product.on_sale && (
-                <Badge className="bg-red-500 text-white">Promotion</Badge>
-              )}
-              {product.featured && (
-                <Badge className="bg-brand-blue text-white">Vedette</Badge>
-              )}
+              {product.on_sale && <Badge className="bg-red-500 text-white">Promotion</Badge>}
+              {product.featured && <Badge className="bg-brand-blue text-white">Vedette</Badge>}
             </div>
             <h1 className="text-3xl font-bold">{product.name}</h1>
             <p className="text-muted-foreground">{product.category}</p>
@@ -192,13 +196,13 @@ export default function ProductDetail() {
             <div className="flex items-center gap-2">
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
-                  <Star 
-                    key={i} 
+                  <Star
+                    key={i}
                     className={`h-4 w-4 ${
-                      i < Math.floor(reviewsStats.averageRating) 
-                        ? 'fill-yellow-400 text-yellow-400' 
+                      i < Math.floor(reviewsStats.averageRating)
+                        ? 'fill-yellow-400 text-yellow-400'
                         : 'text-gray-300'
-                    }`} 
+                    }`}
                   />
                 ))}
               </div>
@@ -217,14 +221,16 @@ export default function ProductDetail() {
             )}
           </div>
 
-          <p className="text-muted-foreground leading-relaxed">
-            {product.description}
-          </p>
+          <p className="text-muted-foreground leading-relaxed">{product.description}</p>
 
           {product.sizes && product.sizes.length > 0 && (
             <div>
               <Label className="text-base font-medium">Taille</Label>
-              <RadioGroup value={selectedSize} onValueChange={setSelectedSize} className="flex gap-2 mt-2">
+              <RadioGroup
+                value={selectedSize}
+                onValueChange={setSelectedSize}
+                className="flex gap-2 mt-2"
+              >
                 {product.sizes.map((size) => (
                   <div key={size} className="flex items-center">
                     <RadioGroupItem value={size} id={size} className="sr-only" />
@@ -247,7 +253,11 @@ export default function ProductDetail() {
           {product.colors && product.colors.length > 0 && (
             <div>
               <Label className="text-base font-medium">Couleur</Label>
-              <RadioGroup value={selectedColor} onValueChange={setSelectedColor} className="flex gap-2 mt-2">
+              <RadioGroup
+                value={selectedColor}
+                onValueChange={setSelectedColor}
+                className="flex gap-2 mt-2"
+              >
                 {product.colors.map((color) => (
                   <div key={color} className="flex items-center">
                     <RadioGroupItem value={color} id={color} className="sr-only" />
@@ -278,30 +288,17 @@ export default function ProductDetail() {
                 -
               </Button>
               <span className="w-12 text-center">{quantity}</span>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setQuantity(quantity + 1)}
-              >
+              <Button variant="outline" size="icon" onClick={() => setQuantity(quantity + 1)}>
                 +
               </Button>
             </div>
           </div>
 
           <div className="flex gap-4">
-            <Button 
-              size="lg" 
-              className="flex-1"
-              onClick={handleAddToCart}
-            >
+            <Button size="lg" className="flex-1" onClick={handleAddToCart}>
               Ajouter au panier
             </Button>
-            <Button 
-              size="lg" 
-              variant="secondary"
-              className="flex-1"
-              onClick={handleGoToCart}
-            >
+            <Button size="lg" variant="secondary" className="flex-1" onClick={handleGoToCart}>
               Commander
             </Button>
             <Button variant="outline" size="lg">
@@ -331,16 +328,15 @@ export default function ProductDetail() {
           </DialogHeader>
           <div className="py-4">
             <p className="text-sm text-muted-foreground">
-              {product.name} ({selectedSize}, {selectedColor}, Quantité: {quantity}) a été ajouté à votre panier.
+              {product.name} ({selectedSize}, {selectedColor}, Quantité: {quantity}) a été ajouté à
+              votre panier.
             </p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCartModalOpen(false)}>
               Continuer mes achats
             </Button>
-            <Button onClick={handleGoToCartFromModal}>
-              Commander
-            </Button>
+            <Button onClick={handleGoToCartFromModal}>Commander</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -357,14 +353,17 @@ export default function ProductDetail() {
           <TabsContent value="description" className="mt-6">
             <div className="prose max-w-none">
               <p>{product.description}</p>
-              <p>Ce produit fait partie de notre collection premium, conçue avec des matériaux de haute qualité pour vous offrir confort et style au quotidien.</p>
+              <p>
+                Ce produit fait partie de notre collection premium, conçue avec des matériaux de
+                haute qualité pour vous offrir confort et style au quotidien.
+              </p>
             </div>
           </TabsContent>
           <TabsContent value="specifications" className="mt-6">
             <ProductSpecifications productId={product.id} />
           </TabsContent>
           <TabsContent value="reviews" className="mt-6">
-            <ProductReviews 
+            <ProductReviews
               productId={product.id}
               averageRating={reviewsStats?.averageRating || 0}
               totalReviews={reviewsStats?.totalReviews || 0}
@@ -374,14 +373,24 @@ export default function ProductDetail() {
               <form onSubmit={handleSubmitReview} className="space-y-4">
                 <div>
                   <Label htmlFor="rating">Note (1-5)</Label>
-                  <RadioGroup value={rating?.toString() || ''} onValueChange={(value) => setRating(Number(value))} className="flex gap-2 mt-2">
+                  <RadioGroup
+                    value={rating?.toString() || ''}
+                    onValueChange={(value) => setRating(Number(value))}
+                    className="flex gap-2 mt-2"
+                  >
                     {[1, 2, 3, 4, 5].map((star) => (
                       <div key={star} className="flex items-center">
-                        <RadioGroupItem value={star.toString()} id={`star-${star}`} className="sr-only" />
+                        <RadioGroupItem
+                          value={star.toString()}
+                          id={`star-${star}`}
+                          className="sr-only"
+                        />
                         <Label
                           htmlFor={`star-${star}`}
                           className={`px-3 py-1 border rounded-lg cursor-pointer ${
-                            rating === star ? 'bg-brand-blue text-white' : 'border-gray-300 hover:border-gray-400'
+                            rating === star
+                              ? 'bg-brand-blue text-white'
+                              : 'border-gray-300 hover:border-gray-400'
                           }`}
                         >
                           {star} ★
@@ -402,7 +411,9 @@ export default function ProductDetail() {
                   />
                 </div>
                 <Button type="submit">Envoyer</Button>
-                {submitStatus && <p className="mt-2 text-sm text-muted-foreground">{submitStatus}</p>}
+                {submitStatus && (
+                  <p className="mt-2 text-sm text-muted-foreground">{submitStatus}</p>
+                )}
               </form>
             </div>
           </TabsContent>

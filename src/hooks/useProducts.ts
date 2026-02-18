@@ -8,11 +8,13 @@ export function useProducts() {
     queryFn: async (): Promise<Product[]> => {
       const { data, error } = await supabase
         .from('products')
-        .select(`
+        .select(
+          `
           *,
           categories(name, slug),
           brands(name, slug)
-        `)
+        `
+        )
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -20,7 +22,7 @@ export function useProducts() {
         throw error;
       }
 
-      return data.map(product => ({
+      return data.map((product) => ({
         id: product.id,
         name: product.name,
         description: product.description || '',
@@ -34,7 +36,7 @@ export function useProducts() {
         stock: product.stock || 0,
         featured: product.featured || false,
         created_at: product.created_at,
-        updated_at: product.updated_at
+        updated_at: product.updated_at,
       }));
     },
   });
@@ -46,11 +48,13 @@ export function useProduct(id: string) {
     queryFn: async (): Promise<Product | null> => {
       const { data, error } = await supabase
         .from('products')
-        .select(`
+        .select(
+          `
           *,
           categories(name, slug),
           brands(name, slug)
-        `)
+        `
+        )
         .eq('id', id)
         .single();
 
@@ -75,7 +79,7 @@ export function useProduct(id: string) {
         stock: data.stock || 0,
         featured: data.featured || false,
         created_at: data.created_at,
-        updated_at: data.updated_at
+        updated_at: data.updated_at,
       };
     },
     enabled: !!id,
@@ -88,11 +92,13 @@ export function useFeaturedProducts() {
     queryFn: async (): Promise<Product[]> => {
       const { data, error } = await supabase
         .from('products')
-        .select(`
+        .select(
+          `
           *,
           categories(name, slug),
           brands(name, slug)
-        `)
+        `
+        )
         .eq('featured', true)
         .order('created_at', { ascending: false })
         .limit(8);
@@ -102,7 +108,7 @@ export function useFeaturedProducts() {
         throw error;
       }
 
-      return data.map(product => ({
+      return data.map((product) => ({
         id: product.id,
         name: product.name,
         description: product.description || '',
@@ -116,7 +122,7 @@ export function useFeaturedProducts() {
         stock: product.stock || 0,
         featured: product.featured || false,
         created_at: product.created_at,
-        updated_at: product.updated_at
+        updated_at: product.updated_at,
       }));
     },
   });
@@ -127,11 +133,13 @@ export function useProductsByCategory(category: string) {
     queryFn: async (): Promise<Product[]> => {
       const { data, error } = await supabase
         .from('products')
-        .select(`
+        .select(
+          `
           *,
           categories(name, slug),
           brands(name, slug)
-        `)
+        `
+        )
         .eq('categories.name', category)
         .order('created_at', { ascending: false });
 
@@ -140,7 +148,7 @@ export function useProductsByCategory(category: string) {
         throw error;
       }
 
-      return data.map(product => ({
+      return data.map((product) => ({
         id: product.id,
         name: product.name,
         description: product.description || '',
@@ -154,7 +162,7 @@ export function useProductsByCategory(category: string) {
         stock: product.stock || 0,
         featured: product.featured || false,
         created_at: product.created_at,
-        updated_at: product.updated_at
+        updated_at: product.updated_at,
       }));
     },
     enabled: !!category,

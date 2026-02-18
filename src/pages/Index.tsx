@@ -1,7 +1,14 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Star, Truck, Shield, Headphones, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  ArrowRight,
+  Star,
+  Truck,
+  Shield,
+  Headphones,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/ProductCard';
@@ -105,15 +112,11 @@ export default function Index() {
       <section className="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
-            <Badge className="mb-4 bg-white/20 text-white">
-              Nouvelle Collection
-            </Badge>
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Style & Élégance
-            </h1>
+            <Badge className="mb-4 bg-white/20 text-white">Nouvelle Collection</Badge>
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">Style & Élégance</h1>
             <p className="text-xl mb-8 text-blue-100">
-              Découvrez notre collection premium de vêtements pour homme. 
-              Qualité exceptionnelle, style intemporel.
+              Découvrez notre collection premium de vêtements pour homme. Qualité exceptionnelle,
+              style intemporel.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" asChild>
@@ -124,7 +127,11 @@ export default function Index() {
                   </span>
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-brand-blue">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-brand-blue"
+              >
                 En savoir plus
               </Button>
             </div>
@@ -141,18 +148,14 @@ export default function Index() {
                 <Truck className="h-8 w-8 text-white" />
               </div>
               <h3 className="font-semibold mb-2">Livraison gratuite</h3>
-              <p className="text-muted-foreground text-sm">
-                Livraison gratuite dès 15000 d'achat
-              </p>
+              <p className="text-muted-foreground text-sm">Livraison gratuite dès 15000 d'achat</p>
             </div>
             <div className="text-center feature-card">
               <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 feature-icon">
                 <Shield className="h-8 w-8 text-white" />
               </div>
               <h3 className="font-semibold mb-2">Garantie qualité</h3>
-              <p className="text-muted-foreground text-sm">
-                Satisfaction garantie ou remboursé
-              </p>
+              <p className="text-muted-foreground text-sm">Satisfaction garantie ou remboursé</p>
             </div>
             <div className="text-center feature-card">
               <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 feature-icon">
@@ -168,9 +171,7 @@ export default function Index() {
                 <Star className="h-8 w-8 text-white" />
               </div>
               <h3 className="font-semibold mb-2">Qualité premium</h3>
-              <p className="text-muted-foreground text-sm">
-                Matériaux haut de gamme sélectionnés
-              </p>
+              <p className="text-muted-foreground text-sm">Matériaux haut de gamme sélectionnés</p>
             </div>
           </div>
         </div>
@@ -184,8 +185,8 @@ export default function Index() {
               Produits vedettes
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-              Découvrez notre sélection de produits les plus populaires, 
-              choisis pour leur qualité et leur style exceptionnel.
+              Découvrez notre sélection de produits les plus populaires, choisis pour leur qualité
+              et leur style exceptionnel.
             </p>
           </div>
 
@@ -196,29 +197,32 @@ export default function Index() {
           ) : (
             <div className="carousel-container">
               <div className="overflow-hidden">
-                <div
-                  ref={carouselRef}
-                  className="carousel-track"
-                >
+                <div ref={carouselRef} className="carousel-track">
                   {/* Dupliquer les produits pour un défilement continu */}
-                  {[...featuredProducts, ...featuredProducts, ...featuredProducts].map((product, index) => (
-                    <div
-                      key={`${product.id}-${index}`}
-                      className="product-card-container"
-                      style={{
-                        animationDelay: `${(index % featuredProducts.length) * 0.2}s`,
-                      }}
-                    >
-                      <ProductCard product={product} />
-                    </div>
-                  ))}
+                  {[...featuredProducts, ...featuredProducts, ...featuredProducts].map(
+                    (product, index) => (
+                      <div
+                        key={`${product.id}-${index}`}
+                        className="product-card-container"
+                        style={{
+                          animationDelay: `${(index % featuredProducts.length) * 0.2}s`,
+                        }}
+                      >
+                        <ProductCard product={product} />
+                      </div>
+                    )
+                  )}
                 </div>
               </div>
             </div>
           )}
 
           <div className="text-center mt-12">
-            <Button size="lg" asChild className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 px-8 py-4 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+            <Button
+              size="lg"
+              asChild
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 px-8 py-4 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            >
               <Link to="/products">
                 <span className="flex items-center">
                   Voir tous les produits
@@ -235,8 +239,8 @@ export default function Index() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">Restez informé</h2>
           <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-            Inscrivez-vous à notre newsletter pour recevoir nos dernières nouveautés 
-            et offres exclusives directement dans votre boîte mail.
+            Inscrivez-vous à notre newsletter pour recevoir nos dernières nouveautés et offres
+            exclusives directement dans votre boîte mail.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
             <input
@@ -244,9 +248,7 @@ export default function Index() {
               placeholder="Votre adresse email"
               className="flex-1 px-4 py-3 rounded-lg text-gray-900"
             />
-            <Button className="bg-brand-blue hover:bg-brand-blue-dark">
-              S'inscrire
-            </Button>
+            <Button className="bg-brand-blue hover:bg-brand-blue-dark">S'inscrire</Button>
           </div>
         </div>
       </section>

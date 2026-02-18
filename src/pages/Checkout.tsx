@@ -88,7 +88,7 @@ export default function Checkout() {
         total_amount: totalWithShipping, // Inclure les frais de livraison
         shipping_amount: SHIPPING_FEE,
         tax_amount: 0,
-        payment_status: 'pending' as 'pending',
+        payment_status: 'pending' as const,
         payment_method: 'pending',
         status: 'pending',
         created_at: new Date().toISOString(),
@@ -107,21 +107,20 @@ export default function Checkout() {
       }
 
       // Insérer les articles de la commande
-      const orderItems = state.items.map(item => ({
+      const orderItems = state.items.map((item) => ({
         order_id: order.id,
         product_id: item.product?.id || null,
         quantity: item.quantity,
         size: item.size,
         color: item.color,
-        price: (item.product?.on_sale && item.product?.sale_price)
-          ? item.product.sale_price
-          : item.product?.price || 0,
+        price:
+          item.product?.on_sale && item.product?.sale_price
+            ? item.product.sale_price
+            : item.product?.price || 0,
         created_at: new Date().toISOString(),
       }));
 
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
+      const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
 
       if (itemsError) {
         throw new Error(`Erreur Supabase (order_items): ${itemsError.message}`);
@@ -132,7 +131,7 @@ export default function Checkout() {
         .map(
           (item, idx) =>
             `${idx + 1}. ${item.product?.name} (${item.size}, ${item.color}) x${item.quantity}: ${formatPriceXAF(
-              ((item.product?.on_sale && item.product?.sale_price)
+              (item.product?.on_sale && item.product?.sale_price
                 ? item.product.sale_price
                 : item.product?.price || 0) * item.quantity
             )}`
@@ -169,11 +168,11 @@ export default function Checkout() {
       try {
         console.log('Envoi email utilisateur:', userEmailParams);
         await emailjs.send(
-        'service_lt1rh5c',
-        'template_mijdj1s', // Remplacez par l'ID réel du modèle client
-        userEmailParams,
-        'fPlwIN8-Jue0vhZba'
-      );
+          'service_lt1rh5c',
+          'template_mijdj1s', // Remplacez par l'ID réel du modèle client
+          userEmailParams,
+          'fPlwIN8-Jue0vhZba'
+        );
         console.log('Email utilisateur envoyé avec succès');
       } catch (error) {
         console.error('Erreur envoi email utilisateur:', error);
@@ -184,11 +183,11 @@ export default function Checkout() {
       try {
         console.log('Envoi email admin:', adminEmailParams);
         await emailjs.send(
-        'service_lt1rh5c',
-        'template_jeafy9e',
-        adminEmailParams,
-        'fPlwIN8-Jue0vhZba'
-      );
+          'service_lt1rh5c',
+          'template_jeafy9e',
+          adminEmailParams,
+          'fPlwIN8-Jue0vhZba'
+        );
         console.log('Email admin envoyé avec succès');
       } catch (error) {
         console.error('Erreur envoi email admin:', error);
@@ -201,12 +200,11 @@ export default function Checkout() {
       });
       clearCart();
       navigate('/order-confirmation');
-
     } catch (error) {
       console.error('Erreur:', error);
       toast({
         title: 'Erreur',
-        description: (error as Error).message || 'Une erreur s\'est produite. Veuillez réessayer.',
+        description: (error as Error).message || "Une erreur s'est produite. Veuillez réessayer.",
         variant: 'destructive',
       });
     } finally {

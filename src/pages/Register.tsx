@@ -1,53 +1,52 @@
-
-import type React from "react"
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { Eye, EyeOff, Mail, Lock, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { useLanguage } from "@/contexts/LanguageContext"
-import { useToast } from "@/hooks/use-toast"
-import { supabase } from "../integrations/supabase/client"
+import type React from 'react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '../integrations/supabase/client';
 
 export default function Register() {
-  const { t } = useLanguage()
-  const { toast } = useToast()
-  const navigate = useNavigate()
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const { t } = useLanguage();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  })
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
       toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Les mots de passe ne correspondent pas.",
-      })
-      return
+        variant: 'destructive',
+        title: 'Erreur',
+        description: 'Les mots de passe ne correspondent pas.',
+      });
+      return;
     }
 
     if (formData.password.length < 6) {
       toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Le mot de passe doit contenir au moins 6 caractères.",
-      })
-      return
+        variant: 'destructive',
+        title: 'Erreur',
+        description: 'Le mot de passe doit contenir au moins 6 caractères.',
+      });
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       // Créer l'utilisateur avec Supabase Auth
@@ -61,15 +60,15 @@ export default function Register() {
             full_name: `${formData.firstName} ${formData.lastName}`,
           },
         },
-      })
+      });
 
       if (authError) {
-        throw authError
+        throw authError;
       }
 
       if (authData.user) {
         // Insérer les données du profil dans la table profiles
-        const { error: profileError } = await supabase.from("profiles").insert([
+        const { error: profileError } = await supabase.from('profiles').insert([
           {
             id: authData.user.id,
             first_name: formData.firstName,
@@ -78,92 +77,92 @@ export default function Register() {
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           },
-        ])
+        ]);
 
         if (profileError) {
-          console.error("Erreur lors de la création du profil:", profileError)
+          console.error('Erreur lors de la création du profil:', profileError);
           // On continue même si le profil n'est pas créé, l'utilisateur est déjà enregistré
         }
 
         toast({
-          title: "Compte créé avec succès !",
-          description: "Vérifiez votre email pour confirmer votre compte.",
-        })
+          title: 'Compte créé avec succès !',
+          description: 'Vérifiez votre email pour confirmer votre compte.',
+        });
 
         // Rediriger vers la page de connexion ou tableau de bord
-        navigate("/login")
+        navigate('/login');
       }
     } catch (error: any) {
-      console.error("Erreur lors de l'inscription:", error)
+      console.error("Erreur lors de l'inscription:", error);
 
-      let errorMessage = "Une erreur est survenue lors de la création du compte."
+      let errorMessage = 'Une erreur est survenue lors de la création du compte.';
 
-      if (error.message.includes("User already registered")) {
-        errorMessage = "Un compte existe déjà avec cette adresse email."
-      } else if (error.message.includes("Invalid email")) {
-        errorMessage = "Adresse email invalide."
-      } else if (error.message.includes("Password should be at least")) {
-        errorMessage = "Le mot de passe doit contenir au moins 6 caractères."
+      if (error.message.includes('User already registered')) {
+        errorMessage = 'Un compte existe déjà avec cette adresse email.';
+      } else if (error.message.includes('Invalid email')) {
+        errorMessage = 'Adresse email invalide.';
+      } else if (error.message.includes('Password should be at least')) {
+        errorMessage = 'Le mot de passe doit contenir au moins 6 caractères.';
       }
 
       toast({
-        variant: "destructive",
+        variant: 'destructive',
         title: "Erreur d'inscription",
         description: errorMessage,
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleGoogleSignUp = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
+        provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/dashboard`,
         },
-      })
+      });
 
       if (error) {
-        throw error
+        throw error;
       }
     } catch (error: any) {
       toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de se connecter avec Google.",
-      })
+        variant: 'destructive',
+        title: 'Erreur',
+        description: 'Impossible de se connecter avec Google.',
+      });
     }
-  }
+  };
 
   const handleFacebookSignUp = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: "facebook",
+        provider: 'facebook',
         options: {
           redirectTo: `${window.location.origin}/dashboard`,
         },
-      })
+      });
 
       if (error) {
-        throw error
+        throw error;
       }
     } catch (error: any) {
       toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de se connecter avec Facebook.",
-      })
+        variant: 'destructive',
+        title: 'Erreur',
+        description: 'Impossible de se connecter avec Facebook.',
+      });
     }
-  }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-    })
-  }
+    });
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-8">
@@ -241,7 +240,7 @@ export default function Register() {
                   <Input
                     id="password"
                     name="password"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     required
                     value={formData.password}
                     onChange={handleChange}
@@ -274,7 +273,7 @@ export default function Register() {
                   <Input
                     id="confirmPassword"
                     name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
+                    type={showConfirmPassword ? 'text' : 'password'}
                     required
                     value={formData.confirmPassword}
                     onChange={handleChange}
@@ -300,19 +299,23 @@ export default function Register() {
               <div className="flex items-start space-x-2">
                 <input type="checkbox" required className="mt-1" disabled={isLoading} />
                 <span className="text-sm text-muted-foreground">
-                  J'accepte les{" "}
+                  J'accepte les{' '}
                   <Link to="/terms" className="text-brand-blue hover:underline">
                     conditions générales
-                  </Link>{" "}
-                  et la{" "}
+                  </Link>{' '}
+                  et la{' '}
                   <Link to="/privacy" className="text-brand-blue hover:underline">
                     politique de confidentialité
                   </Link>
                 </span>
               </div>
 
-              <Button type="submit" className="w-full bg-brand-blue hover:bg-brand-blue-dark" disabled={isLoading}>
-                {isLoading ? "Création en cours..." : "Créer mon compte"}
+              <Button
+                type="submit"
+                className="w-full bg-brand-blue hover:bg-brand-blue-dark"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Création en cours...' : 'Créer mon compte'}
               </Button>
             </form>
 
@@ -324,7 +327,6 @@ export default function Register() {
             </div>
 
             <div className="space-y-3">
-              
               <Button
                 variant="outline"
                 className="w-full bg-transparent"
@@ -346,5 +348,5 @@ export default function Register() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

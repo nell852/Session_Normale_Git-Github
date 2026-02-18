@@ -16,20 +16,31 @@ export function Footer() {
               <div className="bg-brand-blue text-white p-2 rounded-lg">
                 <span className="font-bold text-xl">ST</span>
               </div>
-              <span className="font-bold text-xl text-blue-800 dark:text-blue-800">StyleThread</span>
+              <span className="font-bold text-xl text-blue-800 dark:text-blue-800">
+                StyleThread
+              </span>
             </div>
             <p className="text-blue-900 dark:text-brand-dark-midnight">
-              Votre destination pour des polos et t-shirts de qualité premium. 
-              Style, confort et durabilité réunis.
+              Votre destination pour des polos et t-shirts de qualité premium. Style, confort et
+              durabilité réunis.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors">
+              <a
+                href="#"
+                className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors"
+              >
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors">
+              <a
+                href="#"
+                className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors"
+              >
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors">
+              <a
+                href="#"
+                className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors"
+              >
                 <Twitter className="h-5 w-5" />
               </a>
             </div>
@@ -37,25 +48,39 @@ export function Footer() {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-800">Liens Rapides</h3>
+            <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-800">
+              Liens Rapides
+            </h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/products" className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors">
+                <Link
+                  to="/products"
+                  className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors"
+                >
                   Tous les Produits
                 </Link>
               </li>
               <li>
-                <Link to="/products?category=polos" className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors">
+                <Link
+                  to="/products?category=polos"
+                  className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors"
+                >
                   Polos
                 </Link>
               </li>
               <li>
-                <Link to="/products?category=tshirts" className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors">
+                <Link
+                  to="/products?category=tshirts"
+                  className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors"
+                >
                   T-Shirts
                 </Link>
               </li>
               <li>
-                <Link to="/products?sale=true" className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors">
+                <Link
+                  to="/products?sale=true"
+                  className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors"
+                >
                   Promotions
                 </Link>
               </li>
@@ -64,25 +89,39 @@ export function Footer() {
 
           {/* Customer Service */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-800">Service Client</h3>
+            <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-800">
+              Service Client
+            </h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/contact" className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors">
+                <Link
+                  to="/contact"
+                  className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors"
+                >
                   Nous Contacter
                 </Link>
               </li>
               <li>
-                <Link to="/shipping" className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors">
+                <Link
+                  to="/shipping"
+                  className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors"
+                >
                   Livraison
                 </Link>
               </li>
               <li>
-                <Link to="/returns" className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors">
+                <Link
+                  to="/returns"
+                  className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors"
+                >
                   Retours & Échanges
                 </Link>
               </li>
               <li>
-                <Link to="/size-guide" className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors">
+                <Link
+                  to="/size-guide"
+                  className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white transition-colors"
+                >
                   Guide des Tailles
                 </Link>
               </li>
@@ -95,15 +134,21 @@ export function Footer() {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Mail className="h-4 w-4 text-blue-900 dark:text-brand-dark-midnight" />
-                <span className="text-blue-900 dark:text-brand-dark-midnight">nyogognell@gmail.com</span>
+                <span className="text-blue-900 dark:text-brand-dark-midnight">
+                  nyogognell@gmail.com
+                </span>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-4 w-4 text-blue-900 dark:text-brand-dark-midnight" />
-                <span className="text-blue-900 dark:text-brand-dark-midnight">+237 698 948 425</span>
+                <span className="text-blue-900 dark:text-brand-dark-midnight">
+                  +237 698 948 425
+                </span>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="h-4 w-4 text-blue-900 dark:text-brand-dark-midnight" />
-                <span className="text-blue-900 dark:text-brand-dark-midnight">Yaoundé, Cameroun</span>
+                <span className="text-blue-900 dark:text-brand-dark-midnight">
+                  Yaoundé, Cameroun
+                </span>
               </div>
             </div>
           </div>
@@ -115,13 +160,22 @@ export function Footer() {
               © 2025 StyleThread. Tous droits réservés.
             </div>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link to="/privacy" className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white text-sm transition-colors">
+              <Link
+                to="/privacy"
+                className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white text-sm transition-colors"
+              >
                 Politique de Confidentialité
               </Link>
-              <Link to="/terms" className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white text-sm transition-colors">
+              <Link
+                to="/terms"
+                className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white text-sm transition-colors"
+              >
                 Conditions d'Utilisation
               </Link>
-              <Link to="/cookies" className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white text-sm transition-colors">
+              <Link
+                to="/cookies"
+                className="text-blue-900 hover:text-white dark:text-brand-dark-midnight dark:hover:text-white text-sm transition-colors"
+              >
                 Cookies
               </Link>
             </div>

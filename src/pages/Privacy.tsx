@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -7,7 +6,7 @@ export default function Privacy() {
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-8">Politique de Confidentialité</h1>
-        
+
         <div className="space-y-6">
           <Card>
             <CardHeader>
@@ -16,12 +15,12 @@ export default function Privacy() {
             <CardContent>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  Nous collectons des informations lorsque vous vous inscrivez sur notre site, 
+                  Nous collectons des informations lorsque vous vous inscrivez sur notre site,
                   passez une commande, vous abonnez à notre newsletter ou remplissez un formulaire.
                 </p>
                 <p>
-                  Les informations collectées incluent votre nom, votre adresse e-mail, 
-                  votre adresse postale et votre numéro de téléphone.
+                  Les informations collectées incluent votre nom, votre adresse e-mail, votre
+                  adresse postale et votre numéro de téléphone.
                 </p>
               </div>
             </CardContent>
@@ -52,13 +51,12 @@ export default function Privacy() {
             <CardContent>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  Nous mettons en place diverses mesures de sécurité pour préserver 
-                  la sécurité de vos informations personnelles.
+                  Nous mettons en place diverses mesures de sécurité pour préserver la sécurité de
+                  vos informations personnelles.
                 </p>
                 <p>
-                  Nous utilisons un cryptage sécurisé pour protéger les informations 
-                  sensibles transmises en ligne. Vos informations sont stockées sur 
-                  des serveurs sécurisés.
+                  Nous utilisons un cryptage sécurisé pour protéger les informations sensibles
+                  transmises en ligne. Vos informations sont stockées sur des serveurs sécurisés.
                 </p>
               </div>
             </CardContent>
@@ -71,13 +69,13 @@ export default function Privacy() {
             <CardContent>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  Nous utilisons des cookies pour améliorer votre expérience sur notre site. 
-                  Ces cookies nous aident à mémoriser vos préférences et à analyser 
-                  l'utilisation de notre site.
+                  Nous utilisons des cookies pour améliorer votre expérience sur notre site. Ces
+                  cookies nous aident à mémoriser vos préférences et à analyser l'utilisation de
+                  notre site.
                 </p>
                 <p>
-                  Vous pouvez désactiver les cookies dans votre navigateur, mais cela 
-                  peut affecter le fonctionnement de certaines parties de notre site.
+                  Vous pouvez désactiver les cookies dans votre navigateur, mais cela peut affecter
+                  le fonctionnement de certaines parties de notre site.
                 </p>
               </div>
             </CardContent>
@@ -90,13 +88,13 @@ export default function Privacy() {
             <CardContent>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  Nous ne vendons, n'échangeons et ne transférons pas vos informations 
-                  personnelles identifiables à des tiers sans votre consentement.
+                  Nous ne vendons, n'échangeons et ne transférons pas vos informations personnelles
+                  identifiables à des tiers sans votre consentement.
                 </p>
                 <p>
-                  Ceci n'inclut pas les tierces parties de confiance qui nous aident 
-                  à exploiter notre site web ou à mener nos affaires, tant que ces 
-                  parties conviennent de garder ces informations confidentielles.
+                  Ceci n'inclut pas les tierces parties de confiance qui nous aident à exploiter
+                  notre site web ou à mener nos affaires, tant que ces parties conviennent de garder
+                  ces informations confidentielles.
                 </p>
               </div>
             </CardContent>
@@ -138,11 +136,12 @@ export default function Privacy() {
             <CardContent>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  Si vous avez des questions concernant cette politique de confidentialité, 
-                  vous pouvez nous contacter à :
+                  Si vous avez des questions concernant cette politique de confidentialité, vous
+                  pouvez nous contacter à :
                 </p>
                 <p>
-                  Email : privacy@stylethread.com<br />
+                  Email : privacy@stylethread.com
+                  <br />
                   Adresse : 123 Rue de la Mode, 75001 Paris, France
                 </p>
               </div>

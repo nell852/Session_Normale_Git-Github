@@ -18,7 +18,8 @@ export default function Shipping() {
               Informations sur la Livraison
             </h1>
             <p className="text-lg md:text-xl mb-8 text-blue-100 dark:text-gray-300">
-              Découvrez nos options de livraison rapides et fiables pour recevoir vos vêtements préférés directement chez vous.
+              Découvrez nos options de livraison rapides et fiables pour recevoir vos vêtements
+              préférés directement chez vous.
             </p>
             <Button size="lg" asChild>
               <Link to="/products">
@@ -64,9 +65,7 @@ export default function Shipping() {
                 <p className="text-muted-foreground dark:text-gray-400 mb-4">
                   Livraison en 1-2 jours ouvrables pour les commandes urgentes.
                 </p>
-                <p className="font-semibold text-gray-900 dark:text-gray-100">
-                  Coût : 10000
-                </p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100">Coût : 10000</p>
               </div>
             </div>
           </div>
@@ -85,7 +84,8 @@ export default function Shipping() {
                 Quels sont les délais de livraison ?
               </h3>
               <p className="text-muted-foreground dark:text-gray-400">
-                La livraison standard prend 3-5 jours ouvrables, tandis que la livraison express prend 1-2 jours ouvrables.
+                La livraison standard prend 3-5 jours ouvrables, tandis que la livraison express
+                prend 1-2 jours ouvrables.
               </p>
             </div>
             <div>
@@ -93,7 +93,8 @@ export default function Shipping() {
                 Livrez-vous à l'international ?
               </h3>
               <p className="text-muted-foreground dark:text-gray-400">
-                Oui, nous livrons dans plusieurs pays. Contactez notre support pour plus d'informations sur les destinations et coûts.
+                Oui, nous livrons dans plusieurs pays. Contactez notre support pour plus
+                d'informations sur les destinations et coûts.
               </p>
             </div>
             <div>
@@ -101,7 +102,8 @@ export default function Shipping() {
                 Puis-je suivre ma commande ?
               </h3>
               <p className="text-muted-foreground dark:text-gray-400">
-                Oui, un numéro de suivi vous sera envoyé par e-mail une fois votre commande expédiée.
+                Oui, un numéro de suivi vous sera envoyé par e-mail une fois votre commande
+                expédiée.
               </p>
             </div>
           </div>

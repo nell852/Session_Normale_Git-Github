@@ -43,27 +43,39 @@ const sizes = [
 ];
 
 const colors = [
-  'Noir', 'Blanc', 'Gris', 'Marine', 'Rouge', 'Bleu', 'Vert', 'Jaune', 'Rose', 'Violet'
+  'Noir',
+  'Blanc',
+  'Gris',
+  'Marine',
+  'Rouge',
+  'Bleu',
+  'Vert',
+  'Jaune',
+  'Rose',
+  'Violet',
 ];
 
-const brands = [
-  'StyleThread', 'Premium', 'Classic', 'Urban', 'Sport'
-];
+const brands = ['StyleThread', 'Premium', 'Classic', 'Urban', 'Sport'];
 
-export function ProductFilters({ filters, onFiltersChange, onClear, formatPrice }: ProductFiltersProps) {
+export function ProductFilters({
+  filters,
+  onFiltersChange,
+  onClear,
+  formatPrice,
+}: ProductFiltersProps) {
   const updateFilter = (key: keyof FilterOptions, value: any) => {
     onFiltersChange({
       ...filters,
-      [key]: value
+      [key]: value,
     });
   };
 
   const toggleArrayFilter = (key: 'categories' | 'sizes' | 'colors' | 'brands', value: string) => {
     const currentArray = filters[key];
     const newArray = currentArray.includes(value)
-      ? currentArray.filter(item => item !== value)
+      ? currentArray.filter((item) => item !== value)
       : [...currentArray, value];
-    
+
     updateFilter(key, newArray);
   };
 

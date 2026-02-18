@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { CartItem, Product } from '@/types';
 import { useToast } from '@/hooks/use-toast';
@@ -11,7 +10,10 @@ interface CartState {
 }
 
 type CartAction =
-  | { type: 'ADD_ITEM'; payload: { product: Product; size: string; color: string; quantity: number } }
+  | {
+      type: 'ADD_ITEM';
+      payload: { product: Product; size: string; color: string; quantity: number };
+    }
   | { type: 'REMOVE_ITEM'; payload: string }
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
@@ -37,7 +39,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     case 'ADD_ITEM': {
       const { product, size, color, quantity } = action.payload;
       const existingItemIndex = state.items.findIndex(
-        item => item.product_id === product.id && item.size === size && item.color === color
+        (item) => item.product_id === product.id && item.size === size && item.color === color
       );
 
       let newItems: CartItem[];
@@ -45,7 +47,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         newItems = [...state.items];
         newItems[existingItemIndex] = {
           ...newItems[existingItemIndex],
-          quantity: newItems[existingItemIndex].quantity + quantity
+          quantity: newItems[existingItemIndex].quantity + quantity,
         };
       } else {
         const newItem: CartItem = {
@@ -55,15 +57,16 @@ function cartReducer(state: CartState, action: CartAction): CartState {
           size,
           color,
           product,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         };
         newItems = [...state.items, newItem];
       }
 
       const total = newItems.reduce((sum, item) => {
-        const price = item.product?.on_sale && item.product?.sale_price 
-          ? item.product.sale_price 
-          : item.product?.price || 0;
+        const price =
+          item.product?.on_sale && item.product?.sale_price
+            ? item.product.sale_price
+            : item.product?.price || 0;
         return sum + price * item.quantity;
       }, 0);
 
@@ -74,16 +77,17 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         items: newItems,
         total,
         itemCount,
-        isOpen: true
+        isOpen: true,
       };
     }
 
     case 'REMOVE_ITEM': {
-      const newItems = state.items.filter(item => item.id !== action.payload);
+      const newItems = state.items.filter((item) => item.id !== action.payload);
       const total = newItems.reduce((sum, item) => {
-        const price = item.product?.on_sale && item.product?.sale_price 
-          ? item.product.sale_price 
-          : item.product?.price || 0;
+        const price =
+          item.product?.on_sale && item.product?.sale_price
+            ? item.product.sale_price
+            : item.product?.price || 0;
         return sum + price * item.quantity;
       }, 0);
       const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -92,7 +96,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         ...state,
         items: newItems,
         total,
-        itemCount
+        itemCount,
       };
     }
 
@@ -102,14 +106,13 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         return cartReducer(state, { type: 'REMOVE_ITEM', payload: id });
       }
 
-      const newItems = state.items.map(item =>
-        item.id === id ? { ...item, quantity } : item
-      );
+      const newItems = state.items.map((item) => (item.id === id ? { ...item, quantity } : item));
 
       const total = newItems.reduce((sum, item) => {
-        const price = item.product?.on_sale && item.product?.sale_price 
-          ? item.product.sale_price 
-          : item.product?.price || 0;
+        const price =
+          item.product?.on_sale && item.product?.sale_price
+            ? item.product.sale_price
+            : item.product?.price || 0;
         return sum + price * item.quantity;
       }, 0);
 
@@ -119,7 +122,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         ...state,
         items: newItems,
         total,
-        itemCount
+        itemCount,
       };
     }
 
@@ -128,33 +131,34 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         ...state,
         items: [],
         total: 0,
-        itemCount: 0
+        itemCount: 0,
       };
 
     case 'TOGGLE_CART':
       return {
         ...state,
-        isOpen: !state.isOpen
+        isOpen: !state.isOpen,
       };
 
     case 'OPEN_CART':
       return {
         ...state,
-        isOpen: true
+        isOpen: true,
       };
 
     case 'CLOSE_CART':
       return {
         ...state,
-        isOpen: false
+        isOpen: false,
       };
 
     case 'LOAD_CART': {
       const items = action.payload;
       const total = items.reduce((sum, item) => {
-        const price = item.product?.on_sale && item.product?.sale_price 
-          ? item.product.sale_price 
-          : item.product?.price || 0;
+        const price =
+          item.product?.on_sale && item.product?.sale_price
+            ? item.product.sale_price
+            : item.product?.price || 0;
         return sum + price * item.quantity;
       }, 0);
       const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -163,7 +167,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         ...state,
         items,
         total,
-        itemCount
+        itemCount,
       };
     }
 
@@ -177,7 +181,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     items: [],
     isOpen: false,
     total: 0,
-    itemCount: 0
+    itemCount: 0,
   });
 
   const { toast } = useToast();
@@ -203,7 +207,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const addToCart = (product: Product, size: string, color: string, quantity: number) => {
     dispatch({ type: 'ADD_ITEM', payload: { product, size, color, quantity } });
     toast({
-      title: "Produit ajouté au panier",
+      title: 'Produit ajouté au panier',
       description: `${product.name} (${size}, ${color}) x${quantity}`,
     });
   };
@@ -211,8 +215,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const removeFromCart = (itemId: string) => {
     dispatch({ type: 'REMOVE_ITEM', payload: itemId });
     toast({
-      title: "Produit retiré du panier",
-      variant: "destructive",
+      title: 'Produit retiré du panier',
+      variant: 'destructive',
     });
   };
 
@@ -223,8 +227,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = () => {
     dispatch({ type: 'CLEAR_CART' });
     toast({
-      title: "Panier vidé",
-      description: "Tous les produits ont été retirés du panier",
+      title: 'Panier vidé',
+      description: 'Tous les produits ont été retirés du panier',
     });
   };
 
@@ -233,17 +237,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const closeCart = () => dispatch({ type: 'CLOSE_CART' });
 
   return (
-    <CartContext.Provider value={{
-      state,
-      dispatch,
-      addToCart,
-      removeFromCart,
-      updateQuantity,
-      clearCart,
-      toggleCart,
-      openCart,
-      closeCart
-    }}>
+    <CartContext.Provider
+      value={{
+        state,
+        dispatch,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        toggleCart,
+        openCart,
+        closeCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

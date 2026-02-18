@@ -23,11 +23,8 @@ export function CartDrawer() {
   return (
     <>
       {/* Overlay */}
-      <div 
-        className="fixed inset-0 bg-black/50 z-50"
-        onClick={closeCart}
-      />
-      
+      <div className="fixed inset-0 bg-black/50 z-50" onClick={closeCart} />
+
       {/* Drawer */}
       <div className="fixed right-0 top-0 h-full w-full max-w-md bg-background shadow-xl z-50 animate-slide-in-right">
         <div className="flex flex-col h-full">
@@ -36,9 +33,7 @@ export function CartDrawer() {
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <ShoppingBag className="h-5 w-5" />
               {t('cart.title')}
-              {state.itemCount > 0 && (
-                <Badge variant="secondary">{state.itemCount}</Badge>
-              )}
+              {state.itemCount > 0 && <Badge variant="secondary">{state.itemCount}</Badge>}
             </h2>
             <Button variant="ghost" size="icon" onClick={closeCart}>
               <X className="h-5 w-5" />
@@ -58,9 +53,10 @@ export function CartDrawer() {
             ) : (
               <div className="p-4 space-y-4">
                 {state.items.map((item) => {
-                  const price = (item.product?.on_sale && item.product?.sale_price)
-                    ? item.product.sale_price
-                    : item.product?.price || 0;
+                  const price =
+                    item.product?.on_sale && item.product?.sale_price
+                      ? item.product.sale_price
+                      : item.product?.price || 0;
                   return (
                     <div key={item.id} className="flex gap-4 p-4 border rounded-lg">
                       <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
@@ -72,13 +68,13 @@ export function CartDrawer() {
                           />
                         )}
                       </div>
-                      
+
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium truncate">{item.product?.name}</h4>
                         <p className="text-sm text-muted-foreground">
                           Taille: {item.size} • Couleur: {item.color}
                         </p>
-                        
+
                         <div className="flex items-center justify-between mt-2">
                           <div className="flex items-center space-x-2">
                             <Button
@@ -99,11 +95,9 @@ export function CartDrawer() {
                               <Plus className="h-3 w-3" />
                             </Button>
                           </div>
-                          
+
                           <div className="text-right">
-                            <div className="font-medium">
-                              {formatPriceXAF(price)}
-                            </div>
+                            <div className="font-medium">{formatPriceXAF(price)}</div>
                             <Button
                               variant="ghost"
                               size="sm"

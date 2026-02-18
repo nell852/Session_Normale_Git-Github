@@ -50,9 +50,7 @@ export default function SizeGuide() {
                 <table className="w-full text-left text-muted-foreground dark:text-gray-400">
                   <thead>
                     <tr className="border-b border-gray-200 dark:border-gray-700">
-                      <th className="p-4 font-semibold text-gray-900 dark:text-gray-100">
-                        Taille
-                      </th>
+                      <th className="p-4 font-semibold text-gray-900 dark:text-gray-100">Taille</th>
                       <th className="p-4 font-semibold text-gray-900 dark:text-gray-100">
                         Poitrine (cm)
                       </th>
@@ -109,7 +107,8 @@ export default function SizeGuide() {
                 Comment mesurer votre poitrine
               </h3>
               <p className="text-muted-foreground dark:text-gray-400">
-                Utilisez un ruban à mesurer et passez-le sous vos aisselles, autour de la partie la plus large de votre poitrine.
+                Utilisez un ruban à mesurer et passez-le sous vos aisselles, autour de la partie la
+                plus large de votre poitrine.
               </p>
             </div>
             <div>
@@ -117,7 +116,8 @@ export default function SizeGuide() {
                 Entre deux tailles ?
               </h3>
               <p className="text-muted-foreground dark:text-gray-400">
-                Si vous êtes entre deux tailles, nous recommandons de choisir la taille supérieure pour plus de confort.
+                Si vous êtes entre deux tailles, nous recommandons de choisir la taille supérieure
+                pour plus de confort.
               </p>
             </div>
             <div>
@@ -125,7 +125,8 @@ export default function SizeGuide() {
                 Besoin d'aide ?
               </h3>
               <p className="text-muted-foreground dark:text-gray-400">
-                Contactez notre support client pour des conseils personnalisés sur le choix de votre taille.
+                Contactez notre support client pour des conseils personnalisés sur le choix de votre
+                taille.
               </p>
             </div>
           </div>

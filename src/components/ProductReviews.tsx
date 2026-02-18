@@ -46,22 +46,20 @@ export function ProductReviews({ productId, averageRating, totalReviews }: Produ
         <div>
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
-              <Star 
-                key={i} 
+              <Star
+                key={i}
                 className={`h-4 w-4 ${
-                  i < Math.floor(averageRating) 
-                    ? 'fill-yellow-400 text-yellow-400' 
+                  i < Math.floor(averageRating)
+                    ? 'fill-yellow-400 text-yellow-400'
                     : 'text-gray-300'
-                }`} 
+                }`}
               />
             ))}
           </div>
-          <p className="text-sm text-muted-foreground">
-            Basé sur {totalReviews} avis
-          </p>
+          <p className="text-sm text-muted-foreground">Basé sur {totalReviews} avis</p>
         </div>
       </div>
-      
+
       {reviews.length === 0 ? (
         <p className="text-muted-foreground">Aucun avis pour ce produit.</p>
       ) : (
@@ -71,37 +69,29 @@ export function ProductReviews({ productId, averageRating, totalReviews }: Produ
               <div className="flex items-center gap-2 mb-2">
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
-                    <Star 
-                      key={i} 
+                    <Star
+                      key={i}
                       className={`h-3 w-3 ${
-                        i < review.rating 
-                          ? 'fill-yellow-400 text-yellow-400' 
-                          : 'text-gray-300'
-                      }`} 
+                        i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                      }`}
                     />
                   ))}
                 </div>
-                <span className="font-medium text-sm">
-                  {formatUserName(review)}
-                </span>
+                <span className="font-medium text-sm">{formatUserName(review)}</span>
                 {review.verified_purchase && (
                   <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
                     Achat vérifié
                   </span>
                 )}
                 <span className="text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(review.created_at), { 
+                  {formatDistanceToNow(new Date(review.created_at), {
                     addSuffix: true,
-                    locale: fr 
+                    locale: fr,
                   })}
                 </span>
               </div>
-              {review.title && (
-                <h4 className="font-medium text-sm mb-1">{review.title}</h4>
-              )}
-              <p className="text-sm text-muted-foreground">
-                {review.comment}
-              </p>
+              {review.title && <h4 className="font-medium text-sm mb-1">{review.title}</h4>}
+              <p className="text-sm text-muted-foreground">{review.comment}</p>
             </div>
           ))}
         </div>

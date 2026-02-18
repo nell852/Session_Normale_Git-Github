@@ -21,10 +21,12 @@ export function useProductReviews(productId: string) {
     queryFn: async (): Promise<ProductReview[]> => {
       const { data, error } = await supabase
         .from('product_reviews')
-        .select(`
+        .select(
+          `
           *,
           profiles(first_name, last_name)
-        `)
+        `
+        )
         .eq('product_id', productId)
         .order('created_at', { ascending: false });
 
@@ -55,13 +57,14 @@ export function useProductReviewsStats(productId: string) {
 
       const reviews = data || [];
       const totalReviews = reviews.length;
-      const averageRating = totalReviews > 0 
-        ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews 
-        : 0;
+      const averageRating =
+        totalReviews > 0
+          ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
+          : 0;
 
       return {
         totalReviews,
-        averageRating: Math.round(averageRating * 10) / 10
+        averageRating: Math.round(averageRating * 10) / 10,
       };
     },
     enabled: !!productId,

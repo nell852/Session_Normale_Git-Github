@@ -15,7 +15,7 @@ export default function Contact() {
     name: '',
     email: '',
     subject: '',
-    message: ''
+    message: '',
   });
   const [isLoading, setIsLoading] = useState(false); // État de chargement
 
@@ -32,14 +32,14 @@ export default function Contact() {
           name: formData.name,
           email: formData.email,
           subject: formData.subject,
-          message: formData.message
+          message: formData.message,
         },
         'fPlwIN8-Jue0vhZba' // Remplacez par votre Public Key
       );
 
       toast({
-        title: "Message envoyé",
-        description: "Nous vous répondrons dans les plus brefs délais.",
+        title: 'Message envoyé',
+        description: 'Nous vous répondrons dans les plus brefs délais.',
       });
 
       // Réinitialiser le formulaire
@@ -47,13 +47,13 @@ export default function Contact() {
         name: '',
         email: '',
         subject: '',
-        message: ''
+        message: '',
       });
     } catch (error) {
       toast({
-        title: "Erreur",
+        title: 'Erreur',
         description: "Une erreur s'est produite lors de l'envoi du message. Veuillez réessayer.",
-        variant: "destructive"
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -63,7 +63,7 @@ export default function Contact() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -72,26 +72,26 @@ export default function Contact() {
       icon: Mail,
       title: 'Email',
       value: 'nyogognell@gmail.com',
-      description: 'Réponse sous 24h'
+      description: 'Réponse sous 24h',
     },
     {
       icon: Phone,
       title: 'Téléphone',
       value: '+237 698 849 425',
-      description: 'Lun-Ven 9h-18h'
+      description: 'Lun-Ven 9h-18h',
     },
     {
       icon: MapPin,
       title: 'Adresse',
       value: 'Yaoundé, Odza Borne 10',
-      description: 'Showroom sur RDV'
+      description: 'Showroom sur RDV',
     },
     {
       icon: Clock,
       title: 'Horaires',
       value: 'Lun-Ven: 9h-18h',
-      description: 'Sam: 10h-16h'
-    }
+      description: 'Sam: 10h-16h',
+    },
   ];
 
   return (
@@ -148,7 +148,7 @@ export default function Contact() {
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <label htmlFor="subject" className="block text-sm font-medium mb-2">
                     Sujet *
@@ -164,7 +164,7 @@ export default function Contact() {
                     disabled={isLoading}
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium mb-2">
                     Message *
@@ -180,10 +180,10 @@ export default function Contact() {
                     disabled={isLoading}
                   />
                 </div>
-                
-                <Button 
-                  type="submit" 
-                  className="w-full bg-brand-blue hover:bg-brand-blue-dark" 
+
+                <Button
+                  type="submit"
+                  className="w-full bg-brand-blue hover:bg-brand-blue-dark"
                   disabled={isLoading}
                 >
                   <Send className="h-4 w-4 mr-2" />
@@ -233,7 +233,9 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="font-medium">Guide des tailles</h4>
-                  <p className="text-sm text-muted-foreground">Consultez notre guide sur chaque fiche produit</p>
+                  <p className="text-sm text-muted-foreground">
+                    Consultez notre guide sur chaque fiche produit
+                  </p>
                 </div>
               </div>
             </CardContent>

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState } from 'react';
 
 type Language = 'fr' | 'en';
@@ -19,16 +18,16 @@ const translations = {
     'nav.cart': 'Panier',
     'nav.account': 'Mon compte',
     'nav.login': 'Connexion',
-    'nav.register': 'S\'inscrire',
+    'nav.register': "S'inscrire",
     'nav.logout': 'Déconnexion',
-    
+
     // Home
     'home.title': 'Collection de Polos & T-Shirts Premium',
     'home.subtitle': 'Découvrez notre sélection de vêtements de qualité supérieure',
     'home.featured': 'Produits Vedettes',
     'home.newArrivals': 'Nouveautés',
     'home.onSale': 'En Promotion',
-    
+
     // Products
     'products.title': 'Nos Produits',
     'products.filter': 'Filtrer',
@@ -40,7 +39,7 @@ const translations = {
     'products.addToCart': 'Ajouter au panier',
     'products.outOfStock': 'Rupture de stock',
     'products.sale': 'Promo',
-    
+
     // Cart
     'cart.title': 'Votre Panier',
     'cart.empty': 'Votre panier est vide',
@@ -48,7 +47,7 @@ const translations = {
     'cart.checkout': 'Commander',
     'cart.remove': 'Supprimer',
     'cart.quantity': 'Quantité',
-    
+
     // Forms
     'form.email': 'Email',
     'form.password': 'Mot de passe',
@@ -59,7 +58,7 @@ const translations = {
     'form.city': 'Ville',
     'form.postalCode': 'Code postal',
     'form.country': 'Pays',
-    
+
     // Common
     'common.loading': 'Chargement...',
     'common.error': 'Une erreur est survenue',
@@ -81,14 +80,14 @@ const translations = {
     'nav.login': 'Login',
     'nav.register': 'Register',
     'nav.logout': 'Logout',
-    
+
     // Home
     'home.title': 'Premium Polo & T-Shirt Collection',
     'home.subtitle': 'Discover our selection of superior quality clothing',
     'home.featured': 'Featured Products',
     'home.newArrivals': 'New Arrivals',
     'home.onSale': 'On Sale',
-    
+
     // Products
     'products.title': 'Our Products',
     'products.filter': 'Filter',
@@ -100,7 +99,7 @@ const translations = {
     'products.addToCart': 'Add to Cart',
     'products.outOfStock': 'Out of Stock',
     'products.sale': 'Sale',
-    
+
     // Cart
     'cart.title': 'Your Cart',
     'cart.empty': 'Your cart is empty',
@@ -108,7 +107,7 @@ const translations = {
     'cart.checkout': 'Checkout',
     'cart.remove': 'Remove',
     'cart.quantity': 'Quantity',
-    
+
     // Forms
     'form.email': 'Email',
     'form.password': 'Password',
@@ -119,7 +118,7 @@ const translations = {
     'form.city': 'City',
     'form.postalCode': 'Postal Code',
     'form.country': 'Country',
-    
+
     // Common
     'common.loading': 'Loading...',
     'common.error': 'An error occurred',
@@ -129,7 +128,7 @@ const translations = {
     'common.back': 'Back',
     'common.next': 'Next',
     'common.save': 'Save',
-  }
+  },
 };
 
 const LanguageContext = createContext<LanguageContextType | null>(null);

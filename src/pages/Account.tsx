@@ -1,71 +1,71 @@
-"use client"
+'use client';
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import { User, Package, MapPin, Settings, CreditCard, Heart, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { useLanguage } from "@/contexts/LanguageContext"
-import { useToast } from "@/hooks/use-toast"
-import { supabase } from "@/integrations/supabase/client"
-import { useNavigate } from "react-router-dom"
+import type React from 'react';
+import { useState, useEffect } from 'react';
+import { User, Package, MapPin, Settings, CreditCard, Heart, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 // Interface pour les éléments de commande
 interface OrderItem {
-  id: string
-  product_id: string | null
-  quantity: number
-  size: string
-  color: string
-  price: number
-  created_at: string
+  id: string;
+  product_id: string | null;
+  quantity: number;
+  size: string;
+  color: string;
+  price: number;
+  created_at: string;
 }
 
 // Interface basée sur les champs actuellement disponibles
 interface UserProfile {
-  id: string
-  first_name: string | null
-  last_name: string | null
-  phone: string | null
-  created_at: string
-  updated_at: string
-  email?: string | null
-  avatar_url?: string | null
-  bio?: string | null
-  website?: string | null
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
+  phone: string | null;
+  created_at: string;
+  updated_at: string;
+  email?: string | null;
+  avatar_url?: string | null;
+  bio?: string | null;
+  website?: string | null;
 }
 
 // Type pour les commandes basé sur votre schéma
 interface Order {
-  id: string
-  created_at: string
-  status: "pending" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled" | null
-  total_amount: number
-  payment_status: "pending" | "paid" | "failed" | "refunded" | null
-  tracking_number: string | null
-  user_id: string | null
-  order_items: OrderItem[]
+  id: string;
+  created_at: string;
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | null;
+  total_amount: number;
+  payment_status: 'pending' | 'paid' | 'failed' | 'refunded' | null;
+  tracking_number: string | null;
+  user_id: string | null;
+  order_items: OrderItem[];
 }
 
 export default function Account() {
-  const { t } = useLanguage()
-  const { toast } = useToast()
-  const navigate = useNavigate()
-  const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [orders, setOrders] = useState<Order[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isSaving, setIsSaving] = useState(false)
+  const { t } = useLanguage();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone: "",
-    bio: "",
-    website: "",
-  })
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    bio: '',
+    website: '',
+  });
 
   // Fonction de formatage des prix en XAF
   const formatPriceXAF = (price: number) => {
@@ -77,8 +77,8 @@ export default function Account() {
   };
 
   useEffect(() => {
-    checkUserAndLoadProfile()
-  }, [])
+    checkUserAndLoadProfile();
+  }, []);
 
   const checkUserAndLoadProfile = async () => {
     try {
@@ -86,33 +86,33 @@ export default function Account() {
       const {
         data: { user },
         error: userError,
-      } = await supabase.auth.getUser()
+      } = await supabase.auth.getUser();
 
       if (userError || !user) {
         toast({
-          variant: "destructive",
-          title: "Accès refusé",
-          description: "Vous devez être connecté pour accéder à cette page.",
-        })
-        navigate("/login")
-        return
+          variant: 'destructive',
+          title: 'Accès refusé',
+          description: 'Vous devez être connecté pour accéder à cette page.',
+        });
+        navigate('/login');
+        return;
       }
 
       // Récupérer le profil utilisateur avec gestion des champs optionnels
       const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single()
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
 
       if (profileError) {
-        console.error("Erreur lors de la récupération du profil:", profileError)
+        console.error('Erreur lors de la récupération du profil:', profileError);
         toast({
-          variant: "destructive",
-          title: "Erreur",
-          description: "Impossible de charger votre profil.",
-        })
-        return
+          variant: 'destructive',
+          title: 'Erreur',
+          description: 'Impossible de charger votre profil.',
+        });
+        return;
       }
 
       if (profileData) {
@@ -123,27 +123,28 @@ export default function Account() {
           phone: profileData.phone,
           created_at: profileData.created_at,
           updated_at: profileData.updated_at,
-          email: (profileData as any).email || user.email || "",
+          email: (profileData as any).email || user.email || '',
           avatar_url: (profileData as any).avatar_url || null,
           bio: (profileData as any).bio || null,
           website: (profileData as any).website || null,
-        }
+        };
 
-        setProfile(userProfile)
+        setProfile(userProfile);
         setFormData({
-          first_name: userProfile.first_name || "",
-          last_name: userProfile.last_name || "",
-          email: userProfile.email || "",
-          phone: userProfile.phone || "",
-          bio: userProfile.bio || "",
-          website: userProfile.website || "",
-        })
+          first_name: userProfile.first_name || '',
+          last_name: userProfile.last_name || '',
+          email: userProfile.email || '',
+          phone: userProfile.phone || '',
+          bio: userProfile.bio || '',
+          website: userProfile.website || '',
+        });
       }
 
       // Récupérer les commandes de l'utilisateur avec leurs éléments
       const { data: ordersData, error: ordersError } = await supabase
-        .from("orders")
-        .select(`
+        .from('orders')
+        .select(
+          `
           id,
           created_at,
           status,
@@ -160,51 +161,52 @@ export default function Account() {
             price,
             created_at
           )
-        `)
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
+        `
+        )
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
 
       if (ordersError) {
-        console.error("Erreur lors de la récupération des commandes:", ordersError)
+        console.error('Erreur lors de la récupération des commandes:', ordersError);
         toast({
-          variant: "destructive",
-          title: "Erreur",
-          description: "Impossible de charger vos commandes.",
-        })
+          variant: 'destructive',
+          title: 'Erreur',
+          description: 'Impossible de charger vos commandes.',
+        });
       } else {
-        setOrders(ordersData || [])
+        setOrders(ordersData || []);
       }
     } catch (error) {
-      console.error("Erreur:", error)
+      console.error('Erreur:', error);
       toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors du chargement.",
-      })
+        variant: 'destructive',
+        title: 'Erreur',
+        description: 'Une erreur est survenue lors du chargement.',
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleSaveProfile = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSaving(true)
+    e.preventDefault();
+    setIsSaving(true);
 
     try {
       const {
         data: { user },
-      } = await supabase.auth.getUser()
+      } = await supabase.auth.getUser();
 
       if (!user) {
-        throw new Error("Utilisateur non connecté")
+        throw new Error('Utilisateur non connecté');
       }
 
       const updateData: any = {
@@ -212,39 +214,42 @@ export default function Account() {
         last_name: formData.last_name,
         phone: formData.phone,
         updated_at: new Date().toISOString(),
-      }
+      };
 
       try {
         const { error } = await supabase
-          .from("profiles")
+          .from('profiles')
           .update({
             ...updateData,
             email: formData.email,
             bio: formData.bio,
             website: formData.website,
           })
-          .eq("id", user.id)
+          .eq('id', user.id);
 
         if (error) {
-          const { error: basicError } = await supabase.from("profiles").update(updateData).eq("id", user.id)
+          const { error: basicError } = await supabase
+            .from('profiles')
+            .update(updateData)
+            .eq('id', user.id);
 
           if (basicError) {
-            throw basicError
+            throw basicError;
           }
 
           toast({
-            title: "Profil partiellement mis à jour",
+            title: 'Profil partiellement mis à jour',
             description:
               "Certains champs n'ont pas pu être sauvegardés. Veuillez exécuter les migrations de base de données.",
-          })
+          });
         } else {
           toast({
-            title: "Profil mis à jour",
-            description: "Vos informations ont été sauvegardées avec succès.",
-          })
+            title: 'Profil mis à jour',
+            description: 'Vos informations ont été sauvegardées avec succès.',
+          });
         }
       } catch (updateError) {
-        throw updateError
+        throw updateError;
       }
 
       setProfile((prev) =>
@@ -259,72 +264,72 @@ export default function Account() {
               website: formData.website,
               updated_at: new Date().toISOString(),
             }
-          : null,
-      )
+          : null
+      );
     } catch (error: any) {
-      console.error("Erreur lors de la sauvegarde:", error)
+      console.error('Erreur lors de la sauvegarde:', error);
       toast({
-        variant: "destructive",
-        title: "Erreur de sauvegarde",
-        description: "Impossible de sauvegarder vos modifications.",
-      })
+        variant: 'destructive',
+        title: 'Erreur de sauvegarde',
+        description: 'Impossible de sauvegarder vos modifications.',
+      });
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleSignOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut()
-      if (error) throw error
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
 
       toast({
-        title: "Déconnexion réussie",
-        description: "À bientôt !",
-      })
-      navigate("/login")
+        title: 'Déconnexion réussie',
+        description: 'À bientôt !',
+      });
+      navigate('/login');
     } catch (error: any) {
       toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de se déconnecter.",
-      })
+        variant: 'destructive',
+        title: 'Erreur',
+        description: 'Impossible de se déconnecter.',
+      });
     }
-  }
+  };
 
   const getStatusBadge = (status: string | null) => {
     switch (status) {
-      case "delivered":
-        return <Badge className="bg-green-100 text-green-800">Livré</Badge>
-      case "shipped":
-        return <Badge className="bg-blue-100 text-blue-800">Expédié</Badge>
-      case "processing":
-        return <Badge className="bg-yellow-100 text-yellow-800">En cours</Badge>
-      case "confirmed":
-        return <Badge className="bg-purple-100 text-purple-800">Confirmé</Badge>
-      case "pending":
-        return <Badge className="bg-orange-100 text-orange-800">En attente</Badge>
-      case "cancelled":
-        return <Badge className="bg-red-100 text-red-800">Annulé</Badge>
+      case 'delivered':
+        return <Badge className="bg-green-100 text-green-800">Livré</Badge>;
+      case 'shipped':
+        return <Badge className="bg-blue-100 text-blue-800">Expédié</Badge>;
+      case 'processing':
+        return <Badge className="bg-yellow-100 text-yellow-800">En cours</Badge>;
+      case 'confirmed':
+        return <Badge className="bg-purple-100 text-purple-800">Confirmé</Badge>;
+      case 'pending':
+        return <Badge className="bg-orange-100 text-orange-800">En attente</Badge>;
+      case 'cancelled':
+        return <Badge className="bg-red-100 text-red-800">Annulé</Badge>;
       default:
-        return <Badge variant="secondary">{status || "Inconnu"}</Badge>
+        return <Badge variant="secondary">{status || 'Inconnu'}</Badge>;
     }
-  }
+  };
 
   const getPaymentStatusBadge = (status: string | null) => {
     switch (status) {
-      case "paid":
-        return <Badge className="bg-green-100 text-green-800">Payé</Badge>
-      case "pending":
-        return <Badge className="bg-yellow-100 text-yellow-800">En attente</Badge>
-      case "failed":
-        return <Badge className="bg-red-100 text-red-800">Échoué</Badge>
-      case "refunded":
-        return <Badge className="bg-gray-100 text-gray-800">Remboursé</Badge>
+      case 'paid':
+        return <Badge className="bg-green-100 text-green-800">Payé</Badge>;
+      case 'pending':
+        return <Badge className="bg-yellow-100 text-yellow-800">En attente</Badge>;
+      case 'failed':
+        return <Badge className="bg-red-100 text-red-800">Échoué</Badge>;
+      case 'refunded':
+        return <Badge className="bg-gray-100 text-gray-800">Remboursé</Badge>;
       default:
-        return <Badge variant="secondary">{status || "Inconnu"}</Badge>
+        return <Badge variant="secondary">{status || 'Inconnu'}</Badge>;
     }
-  }
+  };
 
   if (isLoading) {
     return (
@@ -336,7 +341,7 @@ export default function Account() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (!profile) {
@@ -344,17 +349,19 @@ export default function Account() {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Profil introuvable</h1>
-          <Button onClick={() => navigate("/login")}>Se connecter</Button>
+          <Button onClick={() => navigate('/login')}>Se connecter</Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Bonjour {profile.first_name || "Utilisateur"} !</h1>
+          <h1 className="text-3xl font-bold mb-2">
+            Bonjour {profile.first_name || 'Utilisateur'} !
+          </h1>
           <p className="text-muted-foreground">Gérez vos informations et commandes</p>
         </div>
         <Button variant="outline" onClick={handleSignOut}>
@@ -401,7 +408,9 @@ export default function Account() {
                 <div className="text-center py-8">
                   <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
                   <p className="text-lg font-medium mb-2">Aucune commande</p>
-                  <p className="text-muted-foreground mb-4">Vous n'avez pas encore passé de commande</p>
+                  <p className="text-muted-foreground mb-4">
+                    Vous n'avez pas encore passé de commande
+                  </p>
                   <Button variant="outline">Découvrir nos produits</Button>
                 </div>
               ) : (
@@ -416,7 +425,7 @@ export default function Account() {
                             {getPaymentStatusBadge(order.payment_status)}
                           </div>
                           <p className="text-sm text-muted-foreground">
-                            {new Date(order.created_at).toLocaleDateString("fr-FR")}
+                            {new Date(order.created_at).toLocaleDateString('fr-FR')}
                             {order.tracking_number && ` • Suivi: ${order.tracking_number}`}
                           </p>
                         </div>
@@ -433,8 +442,12 @@ export default function Account() {
                             {order.order_items.map((item) => (
                               <li key={item.id} className="text-sm">
                                 <span>
-                                  {item.quantity}x {item.product_id ? `Produit #${item.product_id.slice(0, 8)}` : "Article inconnu"} 
-                                  ({item.size}, {item.color}) - {formatPriceXAF(item.price * item.quantity)}
+                                  {item.quantity}x{' '}
+                                  {item.product_id
+                                    ? `Produit #${item.product_id.slice(0, 8)}`
+                                    : 'Article inconnu'}
+                                  ({item.size}, {item.color}) -{' '}
+                                  {formatPriceXAF(item.price * item.quantity)}
                                 </span>
                               </li>
                             ))}
@@ -454,8 +467,8 @@ export default function Account() {
             <CardHeader>
               <CardTitle>Informations Personnelles</CardTitle>
               <CardDescription>
-                Gérez vos informations de profil • Membre depuis le{" "}
-                {new Date(profile.created_at).toLocaleDateString("fr-FR")}
+                Gérez vos informations de profil • Membre depuis le{' '}
+                {new Date(profile.created_at).toLocaleDateString('fr-FR')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -496,7 +509,9 @@ export default function Account() {
                     disabled={isSaving}
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    {profile.email ? "Email modifiable" : "Champ email non disponible - exécutez les migrations"}
+                    {profile.email
+                      ? 'Email modifiable'
+                      : 'Champ email non disponible - exécutez les migrations'}
                   </p>
                 </div>
 
@@ -524,8 +539,8 @@ export default function Account() {
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     {profile.bio !== undefined
-                      ? "Bio modifiable"
-                      : "Champ bio non disponible - exécutez les migrations"}
+                      ? 'Bio modifiable'
+                      : 'Champ bio non disponible - exécutez les migrations'}
                   </p>
                 </div>
 
@@ -541,19 +556,23 @@ export default function Account() {
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     {profile.website !== undefined
-                      ? "Site web modifiable"
-                      : "Champ site web non disponible - exécutez les migrations"}
+                      ? 'Site web modifiable'
+                      : 'Champ site web non disponible - exécutez les migrations'}
                   </p>
                 </div>
 
-                <Button type="submit" className="bg-brand-blue hover:bg-brand-blue-dark" disabled={isSaving}>
+                <Button
+                  type="submit"
+                  className="bg-brand-blue hover:bg-brand-blue-dark"
+                  disabled={isSaving}
+                >
                   {isSaving ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Sauvegarde...
                     </>
                   ) : (
-                    "Sauvegarder les modifications"
+                    'Sauvegarder les modifications'
                   )}
                 </Button>
               </form>
@@ -572,7 +591,9 @@ export default function Account() {
                 <div className="text-center py-8">
                   <MapPin className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
                   <p className="text-lg font-medium mb-2">Aucune adresse enregistrée</p>
-                  <p className="text-muted-foreground mb-4">Ajoutez une adresse pour faciliter vos commandes</p>
+                  <p className="text-muted-foreground mb-4">
+                    Ajoutez une adresse pour faciliter vos commandes
+                  </p>
                   <Button variant="outline">Ajouter une adresse</Button>
                 </div>
               </div>
@@ -590,7 +611,9 @@ export default function Account() {
               <div className="text-center py-8">
                 <CreditCard className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
                 <p className="text-lg font-medium mb-2">Aucun moyen de paiement</p>
-                <p className="text-muted-foreground mb-4">Ajoutez une carte pour faciliter vos achats</p>
+                <p className="text-muted-foreground mb-4">
+                  Ajoutez une carte pour faciliter vos achats
+                </p>
                 <Button variant="outline">Ajouter une carte</Button>
               </div>
             </CardContent>
@@ -607,7 +630,9 @@ export default function Account() {
               <div className="text-center py-8">
                 <Heart className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
                 <p className="text-lg font-medium mb-2">Votre liste de souhaits est vide</p>
-                <p className="text-muted-foreground mb-4">Ajoutez des articles à votre liste en cliquant sur le cœur</p>
+                <p className="text-muted-foreground mb-4">
+                  Ajoutez des articles à votre liste en cliquant sur le cœur
+                </p>
                 <Button variant="outline">Découvrir nos produits</Button>
               </div>
             </CardContent>
@@ -625,7 +650,9 @@ export default function Account() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">Notifications par email</p>
-                    <p className="text-sm text-muted-foreground">Recevez des emails sur vos commandes et nos offres</p>
+                    <p className="text-sm text-muted-foreground">
+                      Recevez des emails sur vos commandes et nos offres
+                    </p>
                   </div>
                   <input type="checkbox" defaultChecked />
                 </div>
@@ -633,7 +660,9 @@ export default function Account() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">Notifications SMS</p>
-                    <p className="text-sm text-muted-foreground">Recevez des SMS pour le suivi de vos commandes</p>
+                    <p className="text-sm text-muted-foreground">
+                      Recevez des SMS pour le suivi de vos commandes
+                    </p>
                   </div>
                   <input type="checkbox" />
                 </div>
@@ -641,7 +670,9 @@ export default function Account() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">Newsletter</p>
-                    <p className="text-sm text-muted-foreground">Recevez nos dernières nouvelles et offres spéciales</p>
+                    <p className="text-sm text-muted-foreground">
+                      Recevez nos dernières nouvelles et offres spéciales
+                    </p>
                   </div>
                   <input type="checkbox" defaultChecked />
                 </div>
@@ -657,5 +688,5 @@ export default function Account() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

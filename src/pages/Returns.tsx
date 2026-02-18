@@ -18,7 +18,8 @@ export default function Returns() {
               Politique de Retours & Échanges
             </h1>
             <p className="text-lg md:text-xl mb-8 text-blue-100 dark:text-gray-300">
-              Nous voulons que vous soyez entièrement satisfait de votre achat. Découvrez comment retourner ou échanger vos articles facilement.
+              Nous voulons que vous soyez entièrement satisfait de votre achat. Découvrez comment
+              retourner ou échanger vos articles facilement.
             </p>
             <Button size="lg" asChild>
               <Link to="/products">
@@ -48,8 +49,14 @@ export default function Returns() {
               </div>
               <ul className="list-disc pl-6 text-muted-foreground dark:text-gray-400 space-y-2">
                 <li>Les articles doivent être retournés dans les 30 jours suivant la réception.</li>
-                <li>Les articles doivent être non portés, non lavés et dans leur état d'origine avec étiquettes.</li>
-                <li>Les frais de retour sont à la charge du client, sauf en cas d'erreur de notre part.</li>
+                <li>
+                  Les articles doivent être non portés, non lavés et dans leur état d'origine avec
+                  étiquettes.
+                </li>
+                <li>
+                  Les frais de retour sont à la charge du client, sauf en cas d'erreur de notre
+                  part.
+                </li>
               </ul>
             </div>
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mt-6">
@@ -60,7 +67,9 @@ export default function Returns() {
                 </h3>
               </div>
               <ol className="list-decimal pl-6 text-muted-foreground dark:text-gray-400 space-y-2">
-                <li>Contactez notre support client pour obtenir un numéro d'autorisation de retour.</li>
+                <li>
+                  Contactez notre support client pour obtenir un numéro d'autorisation de retour.
+                </li>
                 <li>Emballez les articles avec le formulaire de retour inclus dans votre colis.</li>
                 <li>Envoyez le colis à l'adresse indiquée par notre équipe.</li>
                 <li>Recevez un remboursement ou un échange une fois le colis traité.</li>
@@ -82,7 +91,8 @@ export default function Returns() {
                 Combien de temps prend un remboursement ?
               </h3>
               <p className="text-muted-foreground dark:text-gray-400">
-                Les remboursements sont traités dans les 5-7 jours ouvrables après réception de l'article retourné.
+                Les remboursements sont traités dans les 5-7 jours ouvrables après réception de
+                l'article retourné.
               </p>
             </div>
             <div>
@@ -90,7 +100,8 @@ export default function Returns() {
                 Puis-je échanger un article contre une autre taille ?
               </h3>
               <p className="text-muted-foreground dark:text-gray-400">
-                Oui, les échanges sont possibles sous réserve de disponibilité. Contactez-nous pour organiser un échange.
+                Oui, les échanges sont possibles sous réserve de disponibilité. Contactez-nous pour
+                organiser un échange.
               </p>
             </div>
             <div>
@@ -98,7 +109,8 @@ export default function Returns() {
                 Que faire si j'ai reçu un article défectueux ?
               </h3>
               <p className="text-muted-foreground dark:text-gray-400">
-                Contactez notre support immédiatement. Nous couvrirons les frais de retour et fournirons un remplacement ou un remboursement.
+                Contactez notre support immédiatement. Nous couvrirons les frais de retour et
+                fournirons un remplacement ou un remboursement.
               </p>
             </div>
           </div>

@@ -32,20 +32,23 @@ export function ProductSpecifications({ productId }: ProductSpecificationsProps)
   }
 
   // Group specifications by category
-  const groupedSpecs = specifications.reduce((acc, spec) => {
-    if (!acc[spec.category]) {
-      acc[spec.category] = [];
-    }
-    acc[spec.category].push(spec);
-    return acc;
-  }, {} as Record<string, typeof specifications>);
+  const groupedSpecs = specifications.reduce(
+    (acc, spec) => {
+      if (!acc[spec.category]) {
+        acc[spec.category] = [];
+      }
+      acc[spec.category].push(spec);
+      return acc;
+    },
+    {} as Record<string, typeof specifications>
+  );
 
   const getCategoryTitle = (category: string) => {
     const titles: Record<string, string> = {
       materials: 'Matériaux',
       care: 'Entretien',
       dimensions: 'Dimensions',
-      features: 'Caractéristiques'
+      features: 'Caractéristiques',
     };
     return titles[category] || category;
   };
@@ -57,9 +60,7 @@ export function ProductSpecifications({ productId }: ProductSpecificationsProps)
           <h3 className="font-semibold mb-3">{getCategoryTitle(category)}</h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
             {specs.map((spec) => (
-              <li key={spec.id}>
-                {spec.value ? `${spec.name}: ${spec.value}` : spec.name}
-              </li>
+              <li key={spec.id}>{spec.value ? `${spec.name}: ${spec.value}` : spec.name}</li>
             ))}
           </ul>
         </div>
