@@ -62,7 +62,7 @@ jobs:
           ")
 
           RESPONSE=$(curl -s -X POST \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d "{\"contents\": [{\"parts\": [{\"text\": \"Tu es un expert en code review React TypeScript. Analyse ce diff git et fournis un rapport concis en français avec : 1) Points positifs 2) Problemes detectes 3) Suggestions d amelioration. Diff: ${DIFF}\"}]}]}")
 
