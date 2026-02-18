@@ -47,9 +47,10 @@ jobs:
           echo "Contenu du diff:"
           cat diff.txt | head -50
 
-          echo "diff_content<<EOF" >> $GITHUB_OUTPUT
+          DELIMITER="DIFF_OUTPUT_$(date +%s)"
+          echo "diff_content<<${DELIMITER}" >> $GITHUB_OUTPUT
           head -c 3000 diff.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "${DELIMITER}" >> $GITHUB_OUTPUT
 
       - name: Code Review avec Gemini
         id: gemini_review
@@ -72,17 +73,18 @@ jobs:
           print(data['candidates'][0]['content']['parts'][0]['text'])
           " 2>/dev/null || echo "Analyse Gemini indisponible")
 
-          echo "review<<EOF" >> $GITHUB_OUTPUT
+          DELIMITER="REVIEW_OUTPUT_$(date +%s)"
+          echo "review<<${DELIMITER}" >> $GITHUB_OUTPUT
           echo "$REVIEW" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "${DELIMITER}" >> $GITHUB_OUTPUT
 
       - name: Envoyer le rapport par email
         run: |
-          python3 << 'EOF'
+          python3 << 'PYEOF'
           import smtplib
           from email.mime.multipart import MIMEMultipart
           from email.mime.text import MIMEText
-          import os
+          import os, re
 
           sender   = os.environ['EMAIL_USER']
           receiver = os.environ['EMAIL_USER']
@@ -97,8 +99,6 @@ jobs:
           run_id     = os.environ['GITHUB_RUN_ID']
           review_raw = os.environ['GEMINI_REVIEW']
 
-          # Convertir le markdown basique en HTML
-          import re
           review_html = review_raw
           review_html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', review_html)
           review_html = re.sub(r'\*(.+?)\*', r'<em>\1</em>', review_html)
@@ -110,24 +110,19 @@ jobs:
 
           action_url = server_url + "/" + repo + "/actions/runs/" + run_id
 
-          html = """
-          <!DOCTYPE html>
+          html = """<!DOCTYPE html>
           <html>
           <head><meta charset="UTF-8"></head>
           <body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">
             <table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:32px 0;">
               <tr><td align="center">
                 <table width="620" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-
-                  <!-- HEADER -->
                   <tr>
                     <td style="background:linear-gradient(135deg,#4f46e5,#7c3aed);padding:32px 40px;text-align:center;">
                       <h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;">&#128269; Code Review Report</h1>
                       <p style="color:#c4b5fd;margin:8px 0 0;font-size:14px;">StyleThreads — Analyse automatique par Gemini AI</p>
                     </td>
                   </tr>
-
-                  <!-- INFOS COMMIT -->
                   <tr>
                     <td style="padding:24px 40px 0;">
                       <table width="100%" cellpadding="0" cellspacing="0">
@@ -156,45 +151,34 @@ jobs:
                       </table>
                     </td>
                   </tr>
-
-                  <!-- ANALYSE GEMINI -->
                   <tr>
                     <td style="padding:24px 40px;">
-                      <h2 style="color:#1e293b;font-size:18px;margin:0 0 16px;padding-bottom:8px;border-bottom:2px solid #e2e8f0;">
-                        &#129302; Analyse Gemini AI
-                      </h2>
+                      <h2 style="color:#1e293b;font-size:18px;margin:0 0 16px;padding-bottom:8px;border-bottom:2px solid #e2e8f0;">&#129302; Analyse Gemini AI</h2>
                       <div style="background:#fafafa;border-radius:8px;padding:20px;font-size:14px;line-height:1.7;color:#334155;border:1px solid #e2e8f0;">
                         """ + review_html + """
                       </div>
                     </td>
                   </tr>
-
-                  <!-- BOUTON -->
                   <tr>
                     <td style="padding:0 40px 32px;text-align:center;">
-                      <a href=" """ + action_url + """ "
-                         style="display:inline-block;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;">
+                      <a href=" """ + action_url + """ " style="display:inline-block;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;">
                         &#128279; Voir le rapport complet sur GitHub
                       </a>
                     </td>
                   </tr>
-
-                  <!-- FOOTER -->
                   <tr>
                     <td style="background:#f8fafc;padding:16px 40px;text-align:center;border-top:1px solid #e2e8f0;">
                       <p style="margin:0;font-size:12px;color:#94a3b8;">
-                        Ce rapport a été généré automatiquement par GitHub Actions &amp; Gemini AI
-                        <br>StyleThreads — """ + sha + """
+                        Rapport généré automatiquement par GitHub Actions &amp; Gemini AI<br>
+                        StyleThreads — """ + sha + """
                       </p>
                     </td>
                   </tr>
-
                 </table>
               </td></tr>
             </table>
           </body>
-          </html>
-          """
+          </html>"""
 
           msg = MIMEMultipart('alternative')
           msg['Subject'] = "[StyleThreads] Code Review - " + ref_name + " - " + sha_short
@@ -206,7 +190,7 @@ jobs:
               server.login(sender, password)
               server.sendmail(sender, receiver, msg.as_string())
               print("Email envoye avec succes !")
-          EOF
+          PYEOF
         env:
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
