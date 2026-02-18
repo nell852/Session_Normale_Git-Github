@@ -32,7 +32,6 @@ jobs:
         run: npx prettier --check "src/**/*.{ts,tsx,css}"
 
       - name: Recuperer le diff git
-        id: diff
         run: |
           if git rev-parse HEAD~1 > /dev/null 2>&1; then
             git diff HEAD~1 HEAD --unified=3 > diff.txt
@@ -44,61 +43,44 @@ jobs:
             echo "Aucun changement detecte dans ce commit." > diff.txt
           fi
 
-          echo "Contenu du diff:"
-          cat diff.txt | head -50
+          echo "Contenu du diff (apercu):"
+          head -30 diff.txt
 
-          DELIMITER="DIFF_OUTPUT_$(date +%s)"
-          echo "diff_content<<${DELIMITER}" >> $GITHUB_OUTPUT
-          head -c 3000 diff.txt >> $GITHUB_OUTPUT
-          echo "${DELIMITER}" >> $GITHUB_OUTPUT
-
-      - name: Code Review avec Gemini
-        id: gemini_review
-        run: |
-          DIFF=$(cat diff.txt | head -c 2000 | python3 -c "
-          import sys
-          content = sys.stdin.read()
-          content = content.replace('\\\\', '\\\\\\\\').replace('\"', '\\\\\"').replace('\n', '\\\\n').replace('\r', '')
-          print(content, end='')
-          ")
-
-          RESPONSE=$(curl -s -X POST \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d "{\"contents\": [{\"parts\": [{\"text\": \"Tu es un expert en code review React TypeScript. Analyse ce diff git et fournis un rapport concis en français avec : 1) Points positifs 2) Problemes detectes 3) Suggestions d amelioration. Diff: ${DIFF}\"}]}]}")
-
-          REVIEW=$(echo "$RESPONSE" | python3 -c "
-          import sys, json
-          data = json.load(sys.stdin)
-          print(data['candidates'][0]['content']['parts'][0]['text'])
-          " 2>/dev/null || echo "Analyse Gemini indisponible")
-
-          DELIMITER="REVIEW_OUTPUT_$(date +%s)"
-          echo "review<<${DELIMITER}" >> $GITHUB_OUTPUT
-          echo "$REVIEW" >> $GITHUB_OUTPUT
-          echo "${DELIMITER}" >> $GITHUB_OUTPUT
-
-      - name: Envoyer le rapport par email
+      - name: Code Review avec Gemini et envoi email
         run: |
           python3 << 'PYEOF'
-          import smtplib
+          import smtplib, json, urllib.request, re, os
           from email.mime.multipart import MIMEMultipart
           from email.mime.text import MIMEText
-          import os, re
 
-          sender   = os.environ['EMAIL_USER']
-          receiver = os.environ['EMAIL_USER']
-          password = os.environ['EMAIL_PASS']
+          # Lire le diff depuis le fichier
+          with open('diff.txt', 'r', encoding='utf-8', errors='ignore') as f:
+              diff_content = f.read()[:3000]
 
-          ref_name   = os.environ['GITHUB_REF_NAME']
-          sha        = os.environ['GITHUB_SHA']
-          sha_short  = sha[:7]
-          actor      = os.environ['GITHUB_ACTOR']
-          server_url = os.environ['GITHUB_SERVER_URL']
-          repo       = os.environ['GITHUB_REPOSITORY']
-          run_id     = os.environ['GITHUB_RUN_ID']
-          review_raw = os.environ['GEMINI_REVIEW']
+          # Echapper pour JSON
+          diff_escaped = diff_content.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n').replace('\r', '')
 
+          # Appel API Gemini
+          api_key = os.environ['GEMINI_API_KEY']
+          url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+          prompt = f"Tu es un expert en code review React TypeScript. Analyse ce diff git et fournis un rapport concis en français avec : 1) Points positifs 2) Problèmes détectés 3) Suggestions d amélioration. Diff: {diff_escaped}"
+
+          payload = json.dumps({
+              "contents": [{"parts": [{"text": prompt}]}]
+          }).encode('utf-8')
+
+          req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"}, method="POST")
+
+          try:
+              with urllib.request.urlopen(req) as response:
+                  data = json.loads(response.read().decode('utf-8'))
+                  review_raw = data['candidates'][0]['content']['parts'][0]['text']
+          except Exception as e:
+              review_raw = f"Analyse Gemini indisponible : {str(e)}"
+
+          print("Review obtenue:", review_raw[:200])
+
+          # Convertir markdown en HTML
           review_html = review_raw
           review_html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', review_html)
           review_html = re.sub(r'\*(.+?)\*', r'<em>\1</em>', review_html)
@@ -108,9 +90,19 @@ jobs:
           review_html = re.sub(r'^\d+\) (.+)$', r'<li>\1</li>', review_html, flags=re.MULTILINE)
           review_html = review_html.replace('\n', '<br>')
 
-          action_url = server_url + "/" + repo + "/actions/runs/" + run_id
+          # Variables GitHub
+          sender     = os.environ['EMAIL_USER']
+          password   = os.environ['EMAIL_PASS']
+          ref_name   = os.environ['GITHUB_REF_NAME']
+          sha        = os.environ['GITHUB_SHA']
+          sha_short  = sha[:7]
+          actor      = os.environ['GITHUB_ACTOR']
+          server_url = os.environ['GITHUB_SERVER_URL']
+          repo       = os.environ['GITHUB_REPOSITORY']
+          run_id     = os.environ['GITHUB_RUN_ID']
+          action_url = f"{server_url}/{repo}/actions/runs/{run_id}"
 
-          html = """<!DOCTYPE html>
+          html = f"""<!DOCTYPE html>
           <html>
           <head><meta charset="UTF-8"></head>
           <body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">
@@ -130,13 +122,13 @@ jobs:
                           <td width="50%" style="padding:8px;">
                             <div style="background:#f8fafc;border-radius:8px;padding:16px;border-left:4px solid #4f46e5;">
                               <p style="margin:0;font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Branche</p>
-                              <p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#1e293b;">""" + ref_name + """</p>
+                              <p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#1e293b;">{ref_name}</p>
                             </div>
                           </td>
                           <td width="50%" style="padding:8px;">
                             <div style="background:#f8fafc;border-radius:8px;padding:16px;border-left:4px solid #7c3aed;">
                               <p style="margin:0;font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Commit</p>
-                              <p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#1e293b;font-family:monospace;">""" + sha_short + """</p>
+                              <p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#1e293b;font-family:monospace;">{sha_short}</p>
                             </div>
                           </td>
                         </tr>
@@ -144,7 +136,7 @@ jobs:
                           <td colspan="2" style="padding:8px;">
                             <div style="background:#f8fafc;border-radius:8px;padding:16px;border-left:4px solid #06b6d4;">
                               <p style="margin:0;font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Auteur</p>
-                              <p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#1e293b;">&#128100; """ + actor + """</p>
+                              <p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#1e293b;">&#128100; {actor}</p>
                             </div>
                           </td>
                         </tr>
@@ -155,13 +147,13 @@ jobs:
                     <td style="padding:24px 40px;">
                       <h2 style="color:#1e293b;font-size:18px;margin:0 0 16px;padding-bottom:8px;border-bottom:2px solid #e2e8f0;">&#129302; Analyse Gemini AI</h2>
                       <div style="background:#fafafa;border-radius:8px;padding:20px;font-size:14px;line-height:1.7;color:#334155;border:1px solid #e2e8f0;">
-                        """ + review_html + """
+                        {review_html}
                       </div>
                     </td>
                   </tr>
                   <tr>
                     <td style="padding:0 40px 32px;text-align:center;">
-                      <a href=" """ + action_url + """ " style="display:inline-block;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;">
+                      <a href="{action_url}" style="display:inline-block;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;">
                         &#128279; Voir le rapport complet sur GitHub
                       </a>
                     </td>
@@ -170,7 +162,7 @@ jobs:
                     <td style="background:#f8fafc;padding:16px 40px;text-align:center;border-top:1px solid #e2e8f0;">
                       <p style="margin:0;font-size:12px;color:#94a3b8;">
                         Rapport généré automatiquement par GitHub Actions &amp; Gemini AI<br>
-                        StyleThreads — """ + sha + """
+                        StyleThreads — {sha}
                       </p>
                     </td>
                   </tr>
@@ -181,20 +173,20 @@ jobs:
           </html>"""
 
           msg = MIMEMultipart('alternative')
-          msg['Subject'] = "[StyleThreads] Code Review - " + ref_name + " - " + sha_short
+          msg['Subject'] = f"[StyleThreads] Code Review - {ref_name} - {sha_short}"
           msg['From']    = sender
-          msg['To']      = receiver
+          msg['To']      = sender
           msg.attach(MIMEText(html, 'html'))
 
           with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
               server.login(sender, password)
-              server.sendmail(sender, receiver, msg.as_string())
+              server.sendmail(sender, sender, msg.as_string())
               print("Email envoye avec succes !")
           PYEOF
         env:
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-          GEMINI_REVIEW: ${{ steps.gemini_review.outputs.review }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_ACTOR: ${{ github.actor }}
