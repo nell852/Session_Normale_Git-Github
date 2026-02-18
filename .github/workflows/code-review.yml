@@ -66,8 +66,6 @@ jobs:
             -H "Content-Type: application/json" \
             -d "{\"contents\": [{\"parts\": [{\"text\": \"Tu es un expert en code review React TypeScript. Analyse ce diff git et fournis un rapport concis en français avec : 1) Points positifs 2) Problemes detectes 3) Suggestions d amelioration. Diff: ${DIFF}\"}]}]}")
 
-          echo "Reponse Gemini: $RESPONSE"
-
           REVIEW=$(echo "$RESPONSE" | python3 -c "
           import sys, json
           data = json.load(sys.stdin)
@@ -86,29 +84,122 @@ jobs:
           from email.mime.text import MIMEText
           import os
 
-          sender = os.environ['EMAIL_USER']
+          sender   = os.environ['EMAIL_USER']
           receiver = os.environ['EMAIL_USER']
           password = os.environ['EMAIL_PASS']
 
+          ref_name   = os.environ['GITHUB_REF_NAME']
+          sha        = os.environ['GITHUB_SHA']
+          sha_short  = sha[:7]
+          actor      = os.environ['GITHUB_ACTOR']
+          server_url = os.environ['GITHUB_SERVER_URL']
+          repo       = os.environ['GITHUB_REPOSITORY']
+          run_id     = os.environ['GITHUB_RUN_ID']
+          review_raw = os.environ['GEMINI_REVIEW']
+
+          # Convertir le markdown basique en HTML
+          import re
+          review_html = review_raw
+          review_html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', review_html)
+          review_html = re.sub(r'\*(.+?)\*', r'<em>\1</em>', review_html)
+          review_html = re.sub(r'^## (.+)$', r'<h3 style="color:#4f46e5;margin:16px 0 8px">\1</h3>', review_html, flags=re.MULTILINE)
+          review_html = re.sub(r'^# (.+)$', r'<h2 style="color:#4f46e5;margin:16px 0 8px">\1</h2>', review_html, flags=re.MULTILINE)
+          review_html = re.sub(r'^\* (.+)$', r'<li>\1</li>', review_html, flags=re.MULTILINE)
+          review_html = re.sub(r'^\d+\) (.+)$', r'<li>\1</li>', review_html, flags=re.MULTILINE)
+          review_html = review_html.replace('\n', '<br>')
+
+          action_url = server_url + "/" + repo + "/actions/runs/" + run_id
+
+          html = """
+          <!DOCTYPE html>
+          <html>
+          <head><meta charset="UTF-8"></head>
+          <body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:32px 0;">
+              <tr><td align="center">
+                <table width="620" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+
+                  <!-- HEADER -->
+                  <tr>
+                    <td style="background:linear-gradient(135deg,#4f46e5,#7c3aed);padding:32px 40px;text-align:center;">
+                      <h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;">&#128269; Code Review Report</h1>
+                      <p style="color:#c4b5fd;margin:8px 0 0;font-size:14px;">StyleThreads — Analyse automatique par Gemini AI</p>
+                    </td>
+                  </tr>
+
+                  <!-- INFOS COMMIT -->
+                  <tr>
+                    <td style="padding:24px 40px 0;">
+                      <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td width="50%" style="padding:8px;">
+                            <div style="background:#f8fafc;border-radius:8px;padding:16px;border-left:4px solid #4f46e5;">
+                              <p style="margin:0;font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Branche</p>
+                              <p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#1e293b;">""" + ref_name + """</p>
+                            </div>
+                          </td>
+                          <td width="50%" style="padding:8px;">
+                            <div style="background:#f8fafc;border-radius:8px;padding:16px;border-left:4px solid #7c3aed;">
+                              <p style="margin:0;font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Commit</p>
+                              <p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#1e293b;font-family:monospace;">""" + sha_short + """</p>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colspan="2" style="padding:8px;">
+                            <div style="background:#f8fafc;border-radius:8px;padding:16px;border-left:4px solid #06b6d4;">
+                              <p style="margin:0;font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Auteur</p>
+                              <p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#1e293b;">&#128100; """ + actor + """</p>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- ANALYSE GEMINI -->
+                  <tr>
+                    <td style="padding:24px 40px;">
+                      <h2 style="color:#1e293b;font-size:18px;margin:0 0 16px;padding-bottom:8px;border-bottom:2px solid #e2e8f0;">
+                        &#129302; Analyse Gemini AI
+                      </h2>
+                      <div style="background:#fafafa;border-radius:8px;padding:20px;font-size:14px;line-height:1.7;color:#334155;border:1px solid #e2e8f0;">
+                        """ + review_html + """
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- BOUTON -->
+                  <tr>
+                    <td style="padding:0 40px 32px;text-align:center;">
+                      <a href=" """ + action_url + """ "
+                         style="display:inline-block;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;">
+                        &#128279; Voir le rapport complet sur GitHub
+                      </a>
+                    </td>
+                  </tr>
+
+                  <!-- FOOTER -->
+                  <tr>
+                    <td style="background:#f8fafc;padding:16px 40px;text-align:center;border-top:1px solid #e2e8f0;">
+                      <p style="margin:0;font-size:12px;color:#94a3b8;">
+                        Ce rapport a été généré automatiquement par GitHub Actions &amp; Gemini AI
+                        <br>StyleThreads — """ + sha + """
+                      </p>
+                    </td>
+                  </tr>
+
+                </table>
+              </td></tr>
+            </table>
+          </body>
+          </html>
+          """
+
           msg = MIMEMultipart('alternative')
-          msg['Subject'] = "[StyleThreads] Code Review - " + os.environ['GITHUB_REF_NAME'] + " - " + os.environ['GITHUB_SHA'][:7]
-          msg['From'] = sender
-          msg['To'] = receiver
-
-          html = (
-            "<html><body>"
-            "<h2>Rapport de Code Review</h2>"
-            "<p><b>Branche :</b> " + os.environ['GITHUB_REF_NAME'] + "</p>"
-            "<p><b>Commit :</b> " + os.environ['GITHUB_SHA'] + "</p>"
-            "<p><b>Auteur :</b> " + os.environ['GITHUB_ACTOR'] + "</p>"
-            "<hr>"
-            "<h3>Analyse Gemini</h3>"
-            "<pre>" + os.environ['GEMINI_REVIEW'] + "</pre>"
-            "<hr>"
-            "<p><a href='" + os.environ['GITHUB_SERVER_URL'] + "/" + os.environ['GITHUB_REPOSITORY'] + "/actions/runs/" + os.environ['GITHUB_RUN_ID'] + "'>Voir le rapport complet</a></p>"
-            "</body></html>"
-          )
-
+          msg['Subject'] = "[StyleThreads] Code Review - " + ref_name + " - " + sha_short
+          msg['From']    = sender
+          msg['To']      = receiver
           msg.attach(MIMEText(html, 'html'))
 
           with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
